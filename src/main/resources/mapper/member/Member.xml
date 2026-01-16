@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.seesun.mapper.member.MemberMapper">
+	<!-- 로그인 시 사용 (Username 으로 회원 특정 데이터) -->
+	<select id="getAuthenticationByUsername" resultType="authentication">
+		SELECT mb_id, username, password, mb_type_id
+		FROM member
+		WHERE username = #{username}
+	</select>
+	
+	<!-- 회원가입 -->
+	<insert id="insertMember" parameterType="memberJoin">
+		INSERT INTO member (
+			username,
+			password,
+			name,
+			nickname,
+			phone
+		)
+		VALUES (
+			#{username},
+			#{password},
+			#{name},
+			#{nickname},
+			#{phone}
+		)
+	</insert>
+</mapper>
