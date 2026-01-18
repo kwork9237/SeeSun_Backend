@@ -19,6 +19,9 @@ import lombok.Setter;
 @AllArgsConstructor 
 @NoArgsConstructor
 public class CustomUserDetails implements UserDetails {
+	// 시리얼라이즈 경고 해결
+	private static final long serialVersionUID = 1L;
+	
 	private Long mbId;
 	private String username;
 	private String password;

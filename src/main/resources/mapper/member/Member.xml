@@ -28,4 +28,65 @@
 			#{phone}
 		)
 	</insert>
+	
+	<!-- 중복체크 -->
+	<!-- front에서 value, field 정의해서 보내줘야 한다. -->
+	<select id="checkDuplicate" resultType="boolean">
+		SELECT EXISTS (
+			SELECT 1
+			FROM member
+			WHERE
+			<choose>
+				<when test="field == 'username'">
+					username = #{value}
+				</when>
+				<when test="field == 'nickname'">
+					nickname = #{value}
+				</when>
+				<when test="field == 'phone'">
+					phone = #{value}
+				</when>
+				<otherwise>
+					1 = 0
+				</otherwise> 
+			</choose>
+		)
+	</select>
+	
+	<!-- 회원탈퇴 -->
+	<delete id="deleteMemberByMbId">
+		DELETE FROM member WHERE mb_id = #{mb_id}
+	</delete>
+	
+	<!-- 회원정보 수정 -->
+	<update id="updateMemberInfoByMbId">
+		UPDATE member
+			<set>
+				<if test="dto.name != null">
+					name = #{dto.name},
+				</if>
+				<if test="dto.nickname != null">
+					nickname = #{dto.nickname},
+				</if>
+				<if test="dto.phone != null">
+					phone = #{dto.phone},
+				</if>
+			</set>
+		WHERE mb_id = #{mb_id}
+	</update>
+	
+	<!-- 비밀번호 수정 -->
+	<update id="updatePasswordByMbId">
+		UPDATE member
+		SET password = #{password}
+		WHERE mb_id = #{mb_id}
+	</update>
+	
+	<!-- 비밀번호 조회 -->
+	<!-- 회원탈퇴, 정보 수정 등에 이용됨. -->
+	<select id="getPasswordByMbId">
+		SELECT password
+		FROM member
+		WHERE mb_id = #{mb_id}		
+	</select>
 </mapper>

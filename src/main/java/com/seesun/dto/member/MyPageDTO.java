@@ -12,11 +12,11 @@ import lombok.Setter;
 @Setter
 @Alias("myPage")
 public class MyPageDTO {
-	private String username;
-	private String name;
-	private String nickname;
-	private String phone;
-	private String profile_icon;
-	private short mb_type_id;
+	private String username;			// ID (not update)
+	private String name;				// name
+	private String nickname;			// Lecture_name (강의화면에서 보여짐)
+	private String phone;				// Phone
+	private String profile_icon;		// remove able
+	private short mb_type_id;			// Admin, Mento, Mentee
 	private LocalDateTime created_at;
 }

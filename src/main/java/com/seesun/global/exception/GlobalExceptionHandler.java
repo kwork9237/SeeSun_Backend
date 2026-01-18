@@ -1,11 +1,11 @@
 package com.seesun.global.exception;
 
 import org.apache.coyote.BadRequestException;
-import org.apache.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.seesun.dto.exception.ErrorResponseDTO;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -27,9 +27,20 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.internalServerError().body(e.getMessage());
 	}
 	
-	// 로그인 예외 처리 (로그인시에만 호출됨)
-	@ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<String> handleLoginFail(AuthenticationException e) {
-		return ResponseEntity.status(HttpStatus.SC_UNAUTHORIZED).body("ID 또는 PW가 다릅니다.");
-    }
+	// 전역 오류 핸들러
+	// ErrorCode에 추가하면 알아서 핸들링 됨.
+	@ExceptionHandler(GlobalException.class)
+	protected ResponseEntity<ErrorResponseDTO> handleGlobalException(GlobalException e) {
+		ErrorCode errorCode = e.getErrorCode();
+
+        ErrorResponseDTO response = ErrorResponseDTO.builder()
+                .status(errorCode.getStatus())
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .build();
+
+        return ResponseEntity
+                .status(errorCode.getStatus())
+                .body(response);
+	}
 }
