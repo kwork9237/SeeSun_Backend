@@ -2,7 +2,6 @@ package com.seesun.service.member;
 
 import java.util.Set;
 
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.seesun.dto.member.request.LoginRequestDTO;
 import com.seesun.dto.member.request.MemberJoinDTO;
-import com.seesun.dto.member.request.MyPageUpdateDTO;
-import com.seesun.dto.member.request.PasswordUpdateDTO;
 import com.seesun.global.exception.ErrorCode;
 import com.seesun.global.exception.GlobalException;
 import com.seesun.mapper.member.MemberMapper;
@@ -54,29 +51,6 @@ public class MemberService {
 	    return memberMapper.checkDuplicate(field, value);
 	}
 	
-	// 회원탈퇴
-	public void deleteMember(Long mbId, String password) {
-		checkPassword(mbId, password);
-		memberMapper.deleteMemberByMbId(mbId);
-	}
-	
-	// 회원정보 수정
-	public void updateMemberData(Long mbId, MyPageUpdateDTO data) {
-		checkPassword(mbId, data.getPassword());
-		
-		try {
-			memberMapper.updateMemberInfoByMbId(mbId, data.getMyPageData());
-		} catch(DuplicateKeyException e) {
-			throw new GlobalException(ErrorCode.DUPLICATE_MEMBER_DATA);
-		}
-	}
-	
-	// 비밀번호 수정
-	public void updateMemberPassword(Long mbId, PasswordUpdateDTO data) {
-		checkPassword(mbId, data.getOldPassword());
-		memberMapper.updatePasswordByMbId(mbId, pwEncoder.encode(data.getNewPassword()));
-	}
-	
 	// 로그인 요청
 	public String loginRequest(LoginRequestDTO data) {
 		String token;
@@ -98,17 +72,5 @@ public class MemberService {
 		}
 	}
 
-	// 비밀번호 검증
-	private void checkPassword(Long mbId, String password) {
-		// 오류날 경우 return null이 됨.
-		String encodedPw = memberMapper.getPasswordByMbId(mbId);
-		
-		// null이면 회원정보가 없다는 뜻
-		if(encodedPw == null)
-			throw new GlobalException(ErrorCode.INCORRECT_MEMBER_DATA);
-
-		// 비밀번호 불일치
-	    if (!pwEncoder.matches(password, encodedPw))
-	        throw new GlobalException(ErrorCode.PASSWORD_NOT_MATCH);
-	}
+	
 }
