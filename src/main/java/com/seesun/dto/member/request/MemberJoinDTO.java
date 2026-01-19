@@ -13,6 +13,6 @@ public class MemberJoinDTO {
 	private String username;	// ID
 	private String password;	// PW
 	private String name;		// Name
-	private String nickname;	// Lecture_name
+	private String nickname;	// 강의에서 보여질 이름
 	private String phone;		// Phone
 }

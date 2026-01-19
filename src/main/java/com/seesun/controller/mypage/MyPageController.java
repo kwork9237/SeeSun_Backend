@@ -2,7 +2,6 @@ package com.seesun.controller.mypage;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,8 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.seesun.dto.mypage.request.MyPageUpdateDTO;
 import com.seesun.dto.mypage.request.PasswordUpdateDTO;
-import com.seesun.global.exception.ErrorCode;
-import com.seesun.global.exception.GlobalException;
 import com.seesun.security.userdetail.CustomUserDetails;
 import com.seesun.service.mypage.MyPageService;
 
@@ -20,21 +17,12 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/myPage")
+@RequestMapping("/api/mypage")
 public class MyPageController {
 	private final MyPageService myPageService;
-	
-	// 회원탈퇴
-	// body 데이터는 json 형식이 아니라 plain text 형식이여야 한다.
-	@DeleteMapping("/leave")
-	public ResponseEntity<?> leave(@AuthenticationPrincipal CustomUserDetails user, @RequestBody String password) {
-		myPageService.deleteMember(user.getMbId(), password);
 
-		return ResponseEntity.ok("회원탈퇴 완료");
-	}
-	
 	// 회원정보 수정
-	@PatchMapping("/update")
+	@PatchMapping("/profile")
 	public ResponseEntity<?> update(@AuthenticationPrincipal CustomUserDetails user, @RequestBody MyPageUpdateDTO data) {
 		myPageService.updateMemberData(user.getMbId(), data);
 		
@@ -42,7 +30,7 @@ public class MyPageController {
 	}
 	
 	// 비밀번호 수정
-	@PatchMapping("/updatePassword")
+	@PatchMapping("/password")
 	public ResponseEntity<?> updatePassword(@AuthenticationPrincipal CustomUserDetails user, @RequestBody PasswordUpdateDTO data) {
 		myPageService.updateMemberPassword(user.getMbId(), data);
 		
@@ -50,11 +38,8 @@ public class MyPageController {
 	}
 	
 	// 회원 타입 반환
-	@GetMapping("/getMbType")
+	@GetMapping("/member-type")
 	public ResponseEntity<?> getMemberTypeId(@AuthenticationPrincipal CustomUserDetails user) {
-		// 비즈니스 로직이 없으므로 바로 if return
-		if(user == null) throw new GlobalException(ErrorCode.UNAUTHORIZED);
-		
 		return ResponseEntity.ok(user.getMbTypeId());
 	}
 }

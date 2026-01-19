@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.seesun.dto.member.AuthenticationDTO;
+import com.seesun.dto.auth.AuthenticationDTO;
 import com.seesun.mapper.member.MemberMapper;
 
 import lombok.RequiredArgsConstructor;

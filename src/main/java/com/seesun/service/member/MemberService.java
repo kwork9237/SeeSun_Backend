@@ -2,20 +2,24 @@ package com.seesun.service.member;
 
 import java.util.Set;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.seesun.dto.member.request.LoginRequestDTO;
 import com.seesun.dto.member.request.MemberJoinDTO;
+import com.seesun.dto.member.response.LoginResponseDTO;
 import com.seesun.global.exception.ErrorCode;
 import com.seesun.global.exception.GlobalException;
 import com.seesun.mapper.member.MemberMapper;
 import com.seesun.security.jwt.JwtTokenProvider;
 import com.seesun.security.userdetail.CustomUserDetails;
+import com.seesun.service.auth.MemberCredentialService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,12 +27,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberService {
 	private final AuthenticationManager authManager;
+	private final MemberCredentialService credentialService;
 	private final PasswordEncoder pwEncoder;
 	private final JwtTokenProvider jwtProvider;
 	private final MemberMapper memberMapper;
 
 	
 	// 회원가입
+	@Transactional
 	public void insertMember(MemberJoinDTO data) {
 		try {
 			// 비밀번호 암호화
@@ -36,9 +42,16 @@ public class MemberService {
 			
 			// 회원 데이터 저장
 			memberMapper.insertMember(data);
-		} catch(Exception e) {
+		} catch(DuplicateKeyException e) {
 			throw new GlobalException(ErrorCode.UNKNOWN);
 		}
+	}
+	
+	// 회원탈퇴
+	@Transactional
+	public void deleteMember(Long mbId, String password) {
+		credentialService.checkPassword(mbId, password);
+		memberMapper.deleteMemberByMbId(mbId);
 	}
 	
 	// 중복 검사 (회원가입에 사용)
@@ -52,8 +65,8 @@ public class MemberService {
 	}
 	
 	// 로그인 요청
-	public String loginRequest(LoginRequestDTO data) {
-		String token;
+	public LoginResponseDTO loginRequest(LoginRequestDTO data) {
+		LoginResponseDTO response = new LoginResponseDTO();
 		
 		try {
 			Authentication auth = authManager.authenticate(
@@ -64,9 +77,9 @@ public class MemberService {
 			CustomUserDetails d = (CustomUserDetails) auth.getPrincipal();
 	
 			// 토큰 생성 및 반환 
-			token = jwtProvider.createToken(d.getUsername(), d.getMbId());
-			
-			return token;
+			response.setAccessToken(jwtProvider.createToken(d.getUsername(), d.getMbId()));
+
+			return response;
 		} catch (AuthenticationException e) {
 			throw new GlobalException(ErrorCode.IDPW_NOT_MATCH);
 		}
