@@ -3,6 +3,7 @@ package com.seesun.controller.mypage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.seesun.dto.mypage.request.MyPageUpdateDTO;
 import com.seesun.dto.mypage.request.PasswordUpdateDTO;
+import com.seesun.global.exception.ErrorCode;
+import com.seesun.global.exception.GlobalException;
 import com.seesun.security.userdetail.CustomUserDetails;
 import com.seesun.service.mypage.MyPageService;
 
@@ -44,5 +47,14 @@ public class MyPageController {
 		myPageService.updateMemberPassword(user.getMbId(), data);
 		
 		return ResponseEntity.ok("비밀번호 수정 완료");
+	}
+	
+	// 회원 타입 반환
+	@GetMapping("/getMbType")
+	public ResponseEntity<?> getMemberTypeId(@AuthenticationPrincipal CustomUserDetails user) {
+		// 비즈니스 로직이 없으므로 바로 if return
+		if(user == null) throw new GlobalException(ErrorCode.UNAUTHORIZED);
+		
+		return ResponseEntity.ok(user.getMbTypeId());
 	}
 }

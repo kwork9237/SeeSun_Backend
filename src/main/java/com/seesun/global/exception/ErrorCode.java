@@ -8,6 +8,7 @@ public enum ErrorCode {
 	
 	UNKNOWN(500, "U000", "알 수 없는 오류"),
 	INVALID_REQUEST(401, "U001", "잘못된 입력"),
+	UNAUTHORIZED(401, "U002", "로그인 상태에서만 가능합니다."),
 	
 	// 회원 관련 오류
 	IDPW_NOT_MATCH(401, "M001", "아이디 또는 비밀번호 오류"),
