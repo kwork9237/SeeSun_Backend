@@ -87,7 +87,11 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Pre-flight Request 허용
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                
+
+                // WebSocket STOMP 허용(작성자: 홍진기)
+                .requestMatchers("/ws/**", "/ws").permitAll()
+                .requestMatchers("/pub/**", "/sub/**").permitAll()
+
                 // 비로그인시 모든 API 경로 허용 (임시 조치)
                 .requestMatchers("/api/**").permitAll()
                 
