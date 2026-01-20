@@ -2,6 +2,8 @@ package com.seesun.dto.member.request;
 
 import org.apache.ibatis.type.Alias;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +12,7 @@ import lombok.Setter;
 @Setter
 @Alias("memberJoin")
 public class MemberJoinDTO {
+	@JsonProperty("email")		// Front에서는 Email과 매핑됨
 	private String username;	// ID
 	private String password;	// PW
 	private String name;		// Name
