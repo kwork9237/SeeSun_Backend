@@ -31,7 +31,7 @@
 	
 	<!-- 중복체크 -->
 	<!-- front에서 value, field 정의해서 보내줘야 한다. -->
-	<select id="checkDuplicate" resultType="boolean">
+	<select id="checkDuplicate" resultType="int">
 		SELECT EXISTS (
 			SELECT 1
 			FROM member

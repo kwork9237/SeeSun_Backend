@@ -61,7 +61,7 @@ public class MemberService {
 	        throw new GlobalException(ErrorCode.INVALID_REQUEST);
 	    }
 	    
-	    return memberMapper.checkDuplicate(field, value);
+	    return memberMapper.checkDuplicate(field, value) == 1;
 	}
 	
 	// 로그인 요청

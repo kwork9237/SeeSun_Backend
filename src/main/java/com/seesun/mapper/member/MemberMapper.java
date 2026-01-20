@@ -17,7 +17,7 @@ public interface MemberMapper {
 	public void insertMember(MemberJoinDTO data);
 	
 	// 중복체크
-	public boolean checkDuplicate(@Param("field") String field, @Param("value") String value);
+	public int checkDuplicate(@Param("field") String field, @Param("value") String value);
 	
 	// 회원탈퇴
 	public void deleteMemberByMbId(@Param("mb_id") Long mbId);	
