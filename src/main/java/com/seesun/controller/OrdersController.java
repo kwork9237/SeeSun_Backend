@@ -18,8 +18,8 @@ public class OrdersController {
     // 1. [결제 요청] 주문 생성
     @PostMapping("/request")
     public ResponseEntity<Map<String, Object>> createOrder(@RequestBody Map<String, Long> requestData) {
-        Long mbId = requestData.get("mbId");
-        Long leId = requestData.get("leId");
+        Long mbId = requestData.get("mb_id");
+        Long leId = requestData.get("le_id");
 
         // "서비스야, 주문 좀 만들어와!"
         Map<String, Object> responseData = ordersService.createOrder(mbId, leId);

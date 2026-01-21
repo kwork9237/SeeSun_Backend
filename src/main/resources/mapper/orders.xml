@@ -6,11 +6,11 @@
 
     <select id="findLectureById" resultType="map" parameterType="long">
         SELECT title AS title, cost AS cost
-        FROM lecture WHERE le_id = #{leId}
+        FROM lecture WHERE le_id = #{le_Id}
     </select>
 
     <select id="findMemberById" resultType="map" parameterType="long">
-        SELECT name AS customerName FROM member WHERE mb_id = #{mbId}
+        SELECT name AS customerName FROM member WHERE mb_id = #{mb_Id}
     </select>
 
     <insert id="insertOrder" parameterType="orders">
