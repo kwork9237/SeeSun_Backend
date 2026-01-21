@@ -1,14 +1,19 @@
 package com.seesun.controller.member;
 
-import com.seesun.dto.member.MyPageDTO;
+import com.seesun.dto.mypage.request.MyPageUpdateDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.seesun.dto.member.request.LoginRequestDTO;
 import com.seesun.dto.member.request.MemberJoinDTO;
-import com.seesun.dto.member.request.MyPageUpdateDTO;
-import com.seesun.dto.member.request.PasswordUpdateDTO;
+
+import com.seesun.dto.mypage.request.PasswordUpdateDTO;
 import com.seesun.security.userdetail.CustomUserDetails;
 import com.seesun.service.member.MemberService;
 
@@ -48,7 +53,7 @@ public class MemberController {
 	// 회원정보 수정
 	@PostMapping("/update")
 	public ResponseEntity<?> update(@AuthenticationPrincipal CustomUserDetails user, @RequestBody MyPageUpdateDTO data) {
-		memberService.updateMemberData(8L, data);
+		memberService.updateMemberData(user.getMbId(), data);
 		
 		return ResponseEntity.ok("회원정보 수정 완료");
 	}
@@ -67,14 +72,5 @@ public class MemberController {
 		String str = memberService.loginRequest(data);
 		
 		return ResponseEntity.ok(str);
-	}
-	
-	// 정보 가져오기
-	@GetMapping("/info")
-	public ResponseEntity<?> getMemberInfo(@AuthenticationPrincipal CustomUserDetails user) {
-		// 토큰(user)에서 mbId를 꺼내서 서비스를 호출
-		MyPageDTO info = memberService.getMemberInfo(user.getMbId());
-
-		return ResponseEntity.ok(info);
 	}
 }

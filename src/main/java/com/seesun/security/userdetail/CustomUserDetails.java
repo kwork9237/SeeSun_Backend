@@ -7,7 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.seesun.dto.member.AuthenticationDTO;
+import com.seesun.dto.auth.AuthenticationDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;

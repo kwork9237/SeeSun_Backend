@@ -1,4 +1,4 @@
-package com.seesun.dto.member;
+package com.seesun.dto.auth;
 
 import org.apache.ibatis.type.Alias;
 

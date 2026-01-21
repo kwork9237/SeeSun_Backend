@@ -3,9 +3,9 @@ package com.seesun.mapper.member;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.seesun.dto.member.AuthenticationDTO;
-import com.seesun.dto.member.MyPageDTO;
+import com.seesun.dto.auth.AuthenticationDTO;
 import com.seesun.dto.member.request.MemberJoinDTO;
+import com.seesun.dto.mypage.MyPageDTO;
 
 @Mapper
 public interface MemberMapper {

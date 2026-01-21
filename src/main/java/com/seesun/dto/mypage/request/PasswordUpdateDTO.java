@@ -1,4 +1,4 @@
-package com.seesun.dto.member.request;
+package com.seesun.dto.mypage.request;
 
 import lombok.Getter;
 import lombok.Setter;
