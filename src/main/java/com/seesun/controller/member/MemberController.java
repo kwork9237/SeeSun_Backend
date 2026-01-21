@@ -1,13 +1,9 @@
 package com.seesun.controller.member;
 
+import com.seesun.dto.member.MyPageDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.seesun.dto.member.request.LoginRequestDTO;
 import com.seesun.dto.member.request.MemberJoinDTO;
@@ -71,5 +67,14 @@ public class MemberController {
 		String str = memberService.loginRequest(data);
 		
 		return ResponseEntity.ok(str);
+	}
+	
+	// 정보 가져오기
+	@GetMapping("/info")
+	public ResponseEntity<?> getMemberInfo(@AuthenticationPrincipal CustomUserDetails user) {
+		// 토큰(user)에서 mbId를 꺼내서 서비스를 호출
+		MyPageDTO info = memberService.getMemberInfo(user.getMbId());
+
+		return ResponseEntity.ok(info);
 	}
 }

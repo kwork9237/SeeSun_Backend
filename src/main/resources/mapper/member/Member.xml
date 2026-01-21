@@ -89,4 +89,18 @@
 		FROM member
 		WHERE mb_id = #{mb_id}		
 	</select>
+
+	<select id="getMyPageInfo" resultType="myPage" parameterType="long">
+		SELECT
+			username,
+			name,
+			nickname,
+			phone,
+			profile_icon,
+			mb_type_id,
+			created_at
+		FROM member
+		WHERE mb_id = #{mb_id}
+	</select>
+
 </mapper>

@@ -30,4 +30,7 @@ public interface MemberMapper {
 	
 	// 비밀번호 조회
 	public String getPasswordByMbId(@Param("mb_id") Long mbId);
+
+	// 내 정보 조회 (마이페이지용)
+	public MyPageDTO getMyPageInfo(@Param("mb_id") Long mbId);
 }

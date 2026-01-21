@@ -2,6 +2,7 @@ package com.seesun.service.member;
 
 import java.util.Set;
 
+import com.seesun.dto.member.MyPageDTO;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -110,5 +111,16 @@ public class MemberService {
 		// 비밀번호 불일치
 	    if (!pwEncoder.matches(password, encodedPw))
 	        throw new GlobalException(ErrorCode.PASSWORD_NOT_MATCH);
+	}
+
+	// 내 정보 조회
+	public MyPageDTO getMemberInfo(Long mbId) {
+		MyPageDTO info = memberMapper.getMyPageInfo(mbId);
+
+		// 데이터가 없으면 예외 처리
+		if(info == null) {
+			throw new GlobalException(ErrorCode.INCORRECT_MEMBER_DATA);
+		}
+		return info;
 	}
 }

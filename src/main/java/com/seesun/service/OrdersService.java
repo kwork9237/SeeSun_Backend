@@ -85,6 +85,7 @@ public class OrdersService {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
+
         // 성공 시 DB 업데이트
         if (response.statusCode() == 200) {
             ObjectMapper mapper = new ObjectMapper();
