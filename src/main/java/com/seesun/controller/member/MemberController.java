@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.seesun.dto.member.request.EmailVerifyRequestDTO;
 import com.seesun.dto.member.request.LeaveRequestDTO;
 import com.seesun.dto.member.request.LoginRequestDTO;
 import com.seesun.dto.member.request.MemberJoinDTO;
@@ -46,10 +47,18 @@ public class MemberController {
 	// 중복 검사
 	// 유저 이메일, 닉네임, 핸드폰
 	@GetMapping("/exists")
-	public ResponseEntity<?> check(@RequestParam(name="field") String f, @RequestParam(name="value") String v) {
+	public ResponseEntity<Boolean> check(@RequestParam(name="field") String f, @RequestParam(name="value") String v) {
 		boolean res = memberService.checkDuplicate(f, v);
 		
 		return ResponseEntity.ok(res);
+	}
+	
+	// 이메일 번호 인증
+	@PostMapping("/email/verify-code")
+	public ResponseEntity<Boolean> emailVerify(@RequestBody EmailVerifyRequestDTO data) {
+		if(data.getCode().equals("123456")) return ResponseEntity.ok(true);
+		
+		return ResponseEntity.ok(false);
 	}
 	
 	// 로그인

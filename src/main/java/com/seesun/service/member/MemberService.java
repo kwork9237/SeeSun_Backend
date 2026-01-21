@@ -56,6 +56,12 @@ public class MemberService {
 	
 	// 중복 검사 (회원가입에 사용)
 	public boolean checkDuplicate(String field, String value) {
+		// front에서는 email로 작업했으므로 back에서 동일 의미로 매핑
+		// email >> username
+		if ("email".equals(field)) {
+	        field = "username";
+	    }
+		
 		// 3개만 검사
 	    if (!Set.of("username","nickname","phone").contains(field)) {
 	        throw new GlobalException(ErrorCode.INVALID_REQUEST);
