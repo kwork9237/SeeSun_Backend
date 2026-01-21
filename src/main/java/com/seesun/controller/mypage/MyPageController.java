@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.seesun.dto.admin.AdminDto;
 import com.seesun.dto.mypage.request.MyPageUpdateDTO;
 import com.seesun.dto.mypage.request.PasswordUpdateDTO;
 import com.seesun.security.userdetail.CustomUserDetails;
@@ -42,4 +43,13 @@ public class MyPageController {
 	public ResponseEntity<?> getMemberTypeId(@AuthenticationPrincipal CustomUserDetails user) {
 		return ResponseEntity.ok(user.getMbTypeId());
 	}
+	
+	//관리자 메인
+	@GetMapping("/dashboard-stats")
+    public ResponseEntity<AdminDto> getDashboardStats() {
+        AdminDto stats = myPageService.getDashboardStats();
+        System.out.println("stats:"+ stats);
+        
+        return ResponseEntity.ok(stats);
+    }
 }

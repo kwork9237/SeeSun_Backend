@@ -30,4 +30,12 @@ public interface MemberMapper {
 	
 	// 비밀번호 조회
 	public String getPasswordByMbId(@Param("mb_id") Long mbId);
+	
+	// 관리자 메인
+	// 3가지 통계를 한 번에 가져오거나, 각각 가져올 수 있습니다.
+    // 여기서는 각각 조회하여 DTO를 조립하는 방식을 사용합니다.    
+    int countNewMentorRequests();   	// 멘토 신청 카운트
+    int countReportedLectures();    	// 신고 강의 카운트
+//  int countUnansweredInquiries(); 	// 미답변 건의사항 카운트
+	
 }
