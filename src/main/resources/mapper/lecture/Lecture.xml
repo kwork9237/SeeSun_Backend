@@ -3,7 +3,113 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
-<!-- 네임스페이스는 임시 지정. 변경 필요 -->
-<mapper namespace="com.seesun.mapper.member.MemberMapper">
+<mapper namespace="com.seesun.mapper.lecture.LectureMapper">
+
+    <!-- 강의 목록 조회 -->
+    <select id="getLectureList" resultMap="LectureResultMap">
+        SELECT 
+            l.le_id,
+            l.title,
+            l.content,
+            l.cost,
+            l.avg_score,
+            l.difficulty,
+            l.view_count,
+            l.is_active,
+            
+            /* 멘토 정보 */
+            m.mb_id,
+            m.name AS instructor_name,
+            m.profile_icon,
+            
+            /* 언어 카테고리 */
+            c.name AS category_name,
+            
+            /* 통계 정보 */
+            (SELECT COUNT(*) FROM member_enrollment e WHERE e.le_id = l.le_id) AS student_count,
+            
+            /* 리뷰 수는 임시로 view_count 활용 (추후 review 테이블 생성 권장) */
+            l.view_count AS review_count
+            
+        FROM lecture l
+        LEFT JOIN member m ON l.mb_id = m.mb_id
+        LEFT JOIN language_category c ON l.lg_type_Id = c.lg_type_id
+        WHERE l.is_active = 1
+        
+        <!-- 언어 필터 -->
+        <if test="language != null and language != '' and language != '언어'">
+            AND c.name = #{language}
+        </if>
+        
+        <!-- 난이도 필터 -->
+        <if test="difficulty != null">
+            AND l.difficulty = #{difficulty}
+        </if>
+        
+        <!-- 검색어 -->
+        <if test="search != null and search != ''">
+            AND (l.title LIKE CONCAT('%', #{search}, '%') 
+                 OR l.content LIKE CONCAT('%', #{search}, '%'))
+        </if>
+        
+        <!-- 정렬 -->
+        <choose>
+            <when test="sortBy == 'rating'">
+                ORDER BY l.avg_score DESC, l.created_at DESC
+            </when>
+            <when test="sortBy == 'price'">
+                ORDER BY l.cost ASC, l.created_at DESC
+            </when>
+            <when test="sortBy == 'hours'">
+                ORDER BY l.view_count DESC, l.created_at DESC
+            </when>
+            <otherwise>
+                ORDER BY l.created_at DESC
+            </otherwise>
+        </choose>
+    </select>
+    
+    <!-- 강의 상세 조회 -->
+    <select id="getLectureDetail" resultMap="LectureResultMap">
+        SELECT 
+            l.le_id,
+            l.title,
+            l.content,
+            l.cost,
+            l.avg_score,
+            l.difficulty,
+            l.view_count,
+            l.is_active,
+            m.mb_id,
+            m.name AS instructor_name,
+            m.profile_icon,
+            c.name AS category_name,
+            (SELECT COUNT(*) FROM member_enrollment e WHERE e.le_id = l.le_id) AS student_count,
+            l.view_count AS review_count
+        FROM lecture l
+        LEFT JOIN member m ON l.mb_id = m.mb_id
+        LEFT JOIN language_category c ON l.lg_type_Id = c.lg_type_id
+        WHERE l.le_id = #{id}
+    </select>
+    
+    <!-- ResultMap 정의 -->
+    <resultMap id="LectureResultMap" type="dto.lecture.LectureDTO">
+        <id property="leId" column="le_id" />
+        <result property="title" column="title" />
+        <result property="content" column="content" />
+        <result property="cost" column="cost" />
+        <result property="avgScore" column="avg_score" />
+        <result property="difficulty" column="difficulty" />
+        <result property="viewCount" column="view_count" />
+        <result property="isActive" column="is_active" />
+        
+        <result property="mbId" column="mb_id" />
+        <result property="instructorName" column="instructor_name" />
+        <result property="profileIcon" column="profile_icon" />
+        
+        <result property="categoryName" column="category_name" />
+        <result property="studentCount" column="student_count" />
+        <result property="reviewCount" column="review_count" />
+    </resultMap>
 
 </mapper>
