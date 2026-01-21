@@ -93,7 +93,7 @@
     </select>
     
     <!-- ResultMap 정의 -->
-    <resultMap id="LectureResultMap" type="dto.lecture.LectureDTO">
+    <resultMap id="LectureResultMap" type="com.seesun.dto.lecture.LectureDTO">
         <id property="leId" column="le_id" />
         <result property="title" column="title" />
         <result property="content" column="content" />
@@ -112,4 +112,41 @@
         <result property="reviewCount" column="review_count" />
     </resultMap>
 
+
+	<!-- 담당자: 김지민 -->
+    
+    <select id="selectLectureStats" resultType="map">
+        SELECT 
+            lg_type_id, 
+            COUNT(*) as count
+        FROM lecture
+        WHERE is_active = 1
+        GROUP BY lg_type_id
+    </select>
+
+	<select id="selectPopularLectures" parameterType="Long"
+		resultType="com.seesun.dto.lecture.MainLectureResponseDTO">
+		SELECT
+		l.le_id,
+		l.title AS le_title,
+		m.nickname AS mb_nickname,
+		l.cost AS le_price,
+		m.profile_icon AS le_thumb,
+
+		IFNULL(AVG(ev.score), 0.0) AS mentor_rate
+
+		FROM lecture l
+		JOIN member m ON l.mb_id = m.mb_id
+		LEFT JOIN lecture_evaluation ev ON l.le_id = ev.le_id
+
+		WHERE l.lg_type_id = #{lg_type_id}
+		AND l.is_active = 1
+
+		GROUP BY l.le_id, l.title, m.nickname, l.cost, m.profile_icon
+
+		ORDER BY mentor_rate DESC
+		LIMIT 3
+	</select>
+	
+	
 </mapper>

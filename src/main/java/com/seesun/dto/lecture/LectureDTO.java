@@ -1,4 +1,4 @@
-package dto.lecture;
+package com.seesun.dto.lecture;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
