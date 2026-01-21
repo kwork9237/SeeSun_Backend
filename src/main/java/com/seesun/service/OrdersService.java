@@ -14,7 +14,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,7 +50,6 @@ public class OrdersService {
         order.setCost(realCost);
         order.setTitle(realTitle);
         order.setStatus(1); // 1: 대기 상태
-        order.setCreated_at(LocalDateTime.now());
 
         ordersMapper.insertOrder(order);
         System.out.println("✅ Service: 주문 대기 생성 완료 -> " + orderId);
@@ -97,7 +95,6 @@ public class OrdersService {
             updateOrder.setOrder_id(orderId);
             updateOrder.setPayment_key(paymentKey);
             updateOrder.setMethod(method);
-            updateOrder.setApproved_at(LocalDateTime.now());
 
             ordersMapper.updatePaymentSuccess(updateOrder);
             System.out.println("✅ Service: 결제 승인 및 DB 업데이트 완료 -> " + orderId);
