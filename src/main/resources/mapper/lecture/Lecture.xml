@@ -1,99 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.seesun.mapper.lecture.LectureMapper">
 
-    <!-- 강의 목록 조회 -->
-    <select id="getLectureList" resultMap="LectureResultMap">
-        SELECT 
-            l.le_id,
-            l.title,
-            l.content,
-            l.cost,
-            l.avg_score,
-            l.difficulty,
-            l.view_count,
-            l.is_active,
-            
-            /* 멘토 정보 */
-            m.mb_id,
-            m.name AS instructor_name,
-            m.profile_icon,
-            
-            /* 언어 카테고리 */
-            c.name AS category_name,
-            
-            /* 통계 정보 */
-            (SELECT COUNT(*) FROM member_enrollment e WHERE e.le_id = l.le_id) AS student_count,
-            
-            /* 리뷰 수는 임시로 view_count 활용 (추후 review 테이블 생성 권장) */
-            l.view_count AS review_count
-            
-        FROM lecture l
-        LEFT JOIN member m ON l.mb_id = m.mb_id
-        LEFT JOIN language_category c ON l.lg_type_Id = c.lg_type_id
-        WHERE l.is_active = 1
-        
-        <!-- 언어 필터 -->
-        <if test="language != null and language != '' and language != '언어'">
-            AND c.name = #{language}
-        </if>
-        
-        <!-- 난이도 필터 -->
-        <if test="difficulty != null">
-            AND l.difficulty = #{difficulty}
-        </if>
-        
-        <!-- 검색어 -->
-        <if test="search != null and search != ''">
-            AND (l.title LIKE CONCAT('%', #{search}, '%') 
-                 OR l.content LIKE CONCAT('%', #{search}, '%'))
-        </if>
-        
-        <!-- 정렬 -->
-        <choose>
-            <when test="sortBy == 'rating'">
-                ORDER BY l.avg_score DESC, l.created_at DESC
-            </when>
-            <when test="sortBy == 'price'">
-                ORDER BY l.cost ASC, l.created_at DESC
-            </when>
-            <when test="sortBy == 'hours'">
-                ORDER BY l.view_count DESC, l.created_at DESC
-            </when>
-            <otherwise>
-                ORDER BY l.created_at DESC
-            </otherwise>
-        </choose>
-    </select>
-    
-    <!-- 강의 상세 조회 -->
-    <select id="getLectureDetail" resultMap="LectureResultMap">
-        SELECT 
-            l.le_id,
-            l.title,
-            l.content,
-            l.cost,
-            l.avg_score,
-            l.difficulty,
-            l.view_count,
-            l.is_active,
-            m.mb_id,
-            m.name AS instructor_name,
-            m.profile_icon,
-            c.name AS category_name,
-            (SELECT COUNT(*) FROM member_enrollment e WHERE e.le_id = l.le_id) AS student_count,
-            l.view_count AS review_count
-        FROM lecture l
-        LEFT JOIN member m ON l.mb_id = m.mb_id
-        LEFT JOIN language_category c ON l.lg_type_Id = c.lg_type_id
-        WHERE l.le_id = #{id}
-    </select>
-    
-    <!-- ResultMap 정의 -->
-    <resultMap id="LectureResultMap" type="dto.lecture.LectureDTO">
+    <resultMap id="LectureResultMap" type="com.seesun.dto.lecture.LectureDTO">
         <id property="leId" column="le_id" />
         <result property="title" column="title" />
         <result property="content" column="content" />
@@ -102,14 +12,114 @@
         <result property="difficulty" column="difficulty" />
         <result property="viewCount" column="view_count" />
         <result property="isActive" column="is_active" />
-        
         <result property="mbId" column="mb_id" />
         <result property="instructorName" column="instructor_name" />
         <result property="profileIcon" column="profile_icon" />
-        
         <result property="categoryName" column="category_name" />
         <result property="studentCount" column="student_count" />
         <result property="reviewCount" column="review_count" />
+        
+        <result property="totalHours" column="total_hours" />
+        <result property="availableTime" column="available_time" />
+        
+        <!-- ✅ 추가된 필드 -->
+        <result property="startDate" column="start_date" />
+        <result property="endDate" column="end_date" />
+        <result property="availableDays" column="available_days" />
     </resultMap>
 
+    <select id="getLectureList" resultMap="LectureResultMap">
+        SELECT 
+            l.le_id, l.title, l.content, l.cost, l.avg_score, l.difficulty, l.view_count, l.is_active,
+            m.mb_id, m.name AS instructor_name, m.profile_icon,
+            c.name AS category_name,
+            (SELECT COUNT(*) FROM member_enrollment e WHERE e.le_id = l.le_id) AS student_count,
+            l.view_count AS review_count,
+            
+            /* 총 시간(시간 단위 변환) */
+            (SELECT ROUND(IFNULL(SUM(ll.duration), 0) / 60, 1) 
+             FROM lecture_section ls 
+             JOIN lecture_lesson ll ON ls.section_id = ll.section_id 
+             WHERE ls.le_id = l.le_id) AS total_hours,
+            
+            /* 주요 시간 포맷팅 */
+            (SELECT CONCAT(DATE_FORMAT(start_time, '%H:%i'), ' ~ ', DATE_FORMAT(end_time, '%H:%i'))
+             FROM lecture_schedule WHERE le_id = l.le_id LIMIT 1) AS available_time,
+            
+            /* ✅ 강의 시작일 */
+            (SELECT MIN(schedule_date) FROM lecture_schedule WHERE le_id = l.le_id) AS start_date,
+            
+            /* ✅ 강의 종료일 */
+            (SELECT MAX(schedule_date) FROM lecture_schedule WHERE le_id = l.le_id) AS end_date,
+            
+            /* ✅ 요일 정보 (0=일요일 ~ 6=토요일) */
+            (SELECT GROUP_CONCAT(DISTINCT (DAYOFWEEK(schedule_date) - 1) ORDER BY DAYOFWEEK(schedule_date) SEPARATOR ',')
+             FROM lecture_schedule WHERE le_id = l.le_id) AS available_days
+             
+        FROM lecture l
+        LEFT JOIN member m ON l.mb_id = m.mb_id
+        LEFT JOIN language_category c ON l.lg_type_Id = c.lg_type_id
+        WHERE l.is_active = 1
+        <if test="language != null and language != '' and language != '언어'"> AND c.name = #{language} </if>
+        <if test="difficulty != null"> AND l.difficulty = #{difficulty} </if>
+        <if test="search != null and search != ''"> 
+            AND (l.title LIKE CONCAT('%', #{search}, '%') OR l.content LIKE CONCAT('%', #{search}, '%')) 
+        </if>
+        <choose>
+            <when test="sortBy == 'rating'"> ORDER BY l.avg_score DESC </when>
+            <when test="sortBy == 'price'"> ORDER BY l.cost ASC </when>
+            <otherwise> ORDER BY l.created_at DESC </otherwise>
+        </choose>
+    </select>
+
+    <select id="getLectureDetail" resultMap="LectureResultMap">
+        SELECT 
+            l.le_id, l.title, l.content, l.cost, l.avg_score, l.difficulty, l.view_count, l.is_active,
+            m.mb_id, m.name AS instructor_name, m.profile_icon,
+            c.name AS category_name,
+            (SELECT COUNT(*) FROM member_enrollment e WHERE e.le_id = l.le_id) AS student_count,
+            l.view_count AS review_count,
+            
+            /* 총 시간 */
+            (SELECT ROUND(IFNULL(SUM(ll.duration), 0) / 60, 1) 
+             FROM lecture_section ls JOIN lecture_lesson ll ON ls.section_id = ll.section_id 
+             WHERE ls.le_id = l.le_id) AS total_hours,
+            
+            /* ✅ 모든 시간대 추출 (중복 제거) */
+            (SELECT GROUP_CONCAT(DISTINCT DATE_FORMAT(start_time, '%H:%i') ORDER BY start_time SEPARATOR ',')
+             FROM lecture_schedule WHERE le_id = l.le_id) AS available_time,
+            
+            /* ✅ 강의 시작일 */
+            (SELECT MIN(schedule_date) FROM lecture_schedule WHERE le_id = l.le_id) AS start_date,
+            
+            /* ✅ 강의 종료일 */
+            (SELECT MAX(schedule_date) FROM lecture_schedule WHERE le_id = l.le_id) AS end_date,
+            
+            /* ✅ 요일 정보 (0=일요일 ~ 6=토요일) */
+            (SELECT GROUP_CONCAT(DISTINCT (DAYOFWEEK(schedule_date) - 1) ORDER BY DAYOFWEEK(schedule_date) SEPARATOR ',')
+             FROM lecture_schedule WHERE le_id = l.le_id) AS available_days
+             
+        FROM lecture l
+        LEFT JOIN member m ON l.mb_id = m.mb_id
+        LEFT JOIN language_category c ON l.lg_type_Id = c.lg_type_id
+        WHERE l.le_id = #{id}
+    </select>
+
+    <insert id="insertLecture" useGeneratedKeys="true" keyProperty="leId" keyColumn="le_id">
+        INSERT INTO lecture (mb_id, title, content, lg_type_Id, cost, difficulty, is_active)
+        VALUES (#{mbId}, #{title}, #{content}, #{lgTypeId}, #{cost}, #{difficulty}, 1)
+    </insert>
+    
+    <insert id="insertSection" useGeneratedKeys="true" keyProperty="sectionId" keyColumn="section_id">
+        INSERT INTO lecture_section (le_id, title, order_num) VALUES (#{leId}, #{title}, #{orderNum})
+    </insert>
+    
+    <insert id="insertLesson">
+        INSERT INTO lecture_lesson (section_id, title, duration, order_num) VALUES (#{sectionId}, #{title}, #{duration}, #{orderNum})
+    </insert>
+    
+    <insert id="insertSchedule">
+        INSERT INTO lecture_schedule (le_id, schedule_date, start_time, end_time, max_students, current_students, is_available)
+        VALUES (#{leId}, #{scheduleDate}, #{startTime}, #{endTime}, #{maxStudents}, 0, 1)
+    </insert>
 </mapper>
