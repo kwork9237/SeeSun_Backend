@@ -18,7 +18,7 @@
         SELECT
             l.le_id,
             l.title AS le_title,
-            m.nickname AS mb_nickname,
+            m.name AS mb_nickname,
             l.cost AS le_price,
             m.profile_icon AS le_thumb,
             IFNULL(AVG(ev.score), 0.0) AS mentor_rate
