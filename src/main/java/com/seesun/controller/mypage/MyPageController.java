@@ -1,13 +1,17 @@
 package com.seesun.controller.mypage;
 
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.networknt.schema.OutputFormat.List;
 import com.seesun.dto.admin.AdminDto;
 import com.seesun.dto.mypage.request.MyPageUpdateDTO;
 import com.seesun.dto.mypage.request.PasswordUpdateDTO;
@@ -44,12 +48,4 @@ public class MyPageController {
 		return ResponseEntity.ok(user.getMbTypeId());
 	}
 	
-	//관리자 메인
-	@GetMapping("/dashboard-stats")
-    public ResponseEntity<AdminDto> getDashboardStats() {
-        AdminDto stats = myPageService.getDashboardStats();
-        System.out.println("stats:"+ stats);
-        
-        return ResponseEntity.ok(stats);
-    }
 }

@@ -2,6 +2,7 @@ package com.seesun.dto.admin;
 
 import lombok.Data;
 
+// 관리자 초기 화면 DTO
 @Data
 public class AdminDto {
 	private int newMentorCount;       // 신규 멘토 신청 수

@@ -91,23 +91,4 @@
 	</select>
 	
 	
-	<!-- 관리자 메인 -->
-	<select id="countNewMentorRequests" resultType="int">
-        SELECT COUNT(*) 
-        FROM request_mento
-    </select>
-    <select id="countReportedLectures" resultType="int">
-        SELECT COUNT(*) 
-        FROM lecture
-        WHERE is_active = 1
-    </select>
-    <select id="countUnansweredInquiries" resultType="int">
-      <!--   SELECT COUNT(*) 
-        FROM suggestion
-        WHERE is_answered = 0 -->
-    </select>
-	
-	
-	
-	
 </mapper>

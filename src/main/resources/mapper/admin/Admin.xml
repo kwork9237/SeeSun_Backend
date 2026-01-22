@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.seesun.mapper.admin.AdminMapper">
+	
+	<!-- 관리자 메인 -->
+	<select id="countNewMentorRequests" resultType="int">
+        SELECT COUNT(*) 
+        FROM request_mento
+    </select>
+    <select id="countReportedLectures" resultType="int">
+        SELECT COUNT(*) 
+        FROM lecture
+        WHERE is_active = 1
+    </select>
+    <select id="countUnansweredInquiries" resultType="int">
+      <!--   SELECT COUNT(*) 
+        FROM suggestion
+        WHERE is_answered = 0 -->
+    </select>
+	
+	<!-- 멘토 미승인 목록 -->
+	<select id="selectPendingRequests" resultType="com.seesun.dto.admin.MentoRequestDTO">
+        SELECT 
+            req_id as reqId,
+            mb_id as mbId,
+            details,
+            attachment,
+            req_state as reqState
+        FROM request_mento
+        WHERE req_state = 0
+        ORDER BY req_id DESC
+    </select>
+
+	<!-- 멘토 승인 처리  -->
+    <update id="updateRequestStatus" parameterType="int">
+        UPDATE request_mento
+        SET req_state = 1
+        WHERE req_id = #{reqId}
+    </update>
+	
+	
+</mapper>

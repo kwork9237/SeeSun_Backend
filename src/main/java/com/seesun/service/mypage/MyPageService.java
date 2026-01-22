@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.networknt.schema.OutputFormat.List;
 import com.seesun.dto.admin.AdminDto;
 import com.seesun.dto.mypage.request.MyPageUpdateDTO;
 import com.seesun.dto.mypage.request.PasswordUpdateDTO;
@@ -39,17 +40,6 @@ public class MyPageService {
 	public void updateMemberPassword(Long mbId, PasswordUpdateDTO data) {
 		credentialService.checkPassword(mbId, data.getOldPassword());
 		memberMapper.updatePasswordByMbId(mbId, pwEncoder.encode(data.getNewPassword()));
-	}
-	
-	//관리자 메인
-	public AdminDto getDashboardStats() {
-        AdminDto stats = new AdminDto();
-		// 각각의 카운트를 DB에서 조회하여 DTO에 설정
-        stats.setNewMentorCount(memberMapper.countNewMentorRequests());
-        stats.setReportedLectureCount(memberMapper.countReportedLectures());
-//      stats.setInquiryCount(memberMapper.countUnansweredInquiries());
-        
-        return stats;
 	}
 	
 	
