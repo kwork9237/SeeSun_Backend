@@ -91,6 +91,9 @@ public class SecurityConfig {
                     // ▼▼▼ [추가] 결제 관련 API는 무조건 통과! (명시적 허용) ▼▼▼
                     .requestMatchers("/api/orders/**").permitAll()
 
+                    // ▼▼▼ [추가] 마이페이지 관련 API는 무조건 통과! (명시적 허용) ▼▼▼
+                    .requestMatchers("/api/member/**").permitAll()
+
                 // 비로그인시 모든 API 경로 허용 (임시 조치)
                 .requestMatchers("/api/**").permitAll()
                 

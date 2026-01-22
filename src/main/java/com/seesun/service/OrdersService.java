@@ -14,10 +14,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -98,10 +95,27 @@ public class OrdersService {
             updateOrder.setMethod(method);
 
             ordersMapper.updatePaymentSuccess(updateOrder);
+
+            // 수강신청 조회 테이블 값 삽입을 위한 정보 추출
+            OrdersDTO orderInfo = ordersMapper.findOrderByOrderId(orderId);
+
+            // 수강신청 조회 테이블 값 삽입
+            if(orderInfo != null){
+                ordersMapper.insertEnrollment(orderInfo.getMb_id(), orderInfo.getLe_id());
+            }
+
             System.out.println("✅ Service: 결제 승인 및 DB 업데이트 완료 -> " + orderId);
         } else {
             System.err.println("❌ Service: 승인 실패 응답 -> " + response.body());
             throw new RuntimeException("토스 결제 승인 실패: " + response.body());
         }
+    }
+
+    // OrdersService.java 내부
+
+    // [결제 내역 조회]
+    public List<Map<String, Object>> getPaymentHistory(Long mbId) {
+        // Mapper한테 "DB에서 긁어와!" 시키기
+        return ordersMapper.getPaymentHistory(mbId);
     }
 }

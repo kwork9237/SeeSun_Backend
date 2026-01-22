@@ -2,7 +2,9 @@ package com.seesun.mapper;
 
 import com.seesun.dto.OrdersDTO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Map;
 
 @Mapper
@@ -16,4 +18,12 @@ public interface OrdersMapper {
 
     // 결제 승인 (UPDATE)
     void updatePaymentSuccess(OrdersDTO ordersDTO);
+
+    // 주문 번호로 주문 정보(누가, 뭘 샀는지) 조회
+    OrdersDTO findOrderByOrderId(String orderId);
+
+    // 수강 신청 테이블(member_enrollment)에 데이터 넣기
+    void insertEnrollment(@Param("mb_id") Long mbId, @Param("le_id") Long leId);
+
+    List<Map<String, Object>> getPaymentHistory(Long mbId);
 }

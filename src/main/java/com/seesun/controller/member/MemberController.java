@@ -1,14 +1,10 @@
 package com.seesun.controller.member;
 
+import com.seesun.dto.mypage.MyPageDTO;
 import com.seesun.dto.mypage.request.MyPageUpdateDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.seesun.dto.member.request.LoginRequestDTO;
 import com.seesun.dto.member.request.MemberJoinDTO;
@@ -18,6 +14,10 @@ import com.seesun.security.userdetail.CustomUserDetails;
 import com.seesun.service.member.MemberService;
 
 import lombok.RequiredArgsConstructor;
+
+// [보안 import]
+// import org.springframework.security.core.annotation.AuthenticationPrincipal;
+// import com.seesun.security.userdetail.CustomUserDetails;
 
 @RestController
 @RequiredArgsConstructor
@@ -73,4 +73,20 @@ public class MemberController {
 		
 		return ResponseEntity.ok(str);
 	}
+
+	//회원 정보 조회
+	@GetMapping("/profile/{mbId}")
+	public ResponseEntity<MyPageDTO> getProfile(@PathVariable Long mbId) {
+		MyPageDTO myPage = memberService.getMyPageInfo(mbId);
+		return ResponseEntity.ok(myPage);
+	}
+
+	/* [미래용: 토큰 버전] ------------------------------------------------
+    @GetMapping("/profile")
+    public ResponseEntity<MyPageDTO> getProfile(@AuthenticationPrincipal CustomUserDetails user) {
+        Long mbId = user.getMbId();
+        MyPageDTO myPage = myPageService.getMyPageInfo(mbId);
+        return ResponseEntity.ok(myPage);
+    }
+    -------------------------------------------------------------------- */
 }
