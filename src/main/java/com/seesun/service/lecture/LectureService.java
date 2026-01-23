@@ -15,6 +15,7 @@ import java.util.Map;
 public class LectureService {
     private final LectureMapper lectureMapper;
 
+    // 강의 목록 조회
     public List<LectureDTO> getLectureList(
             String language, 
             Integer difficulty, 
@@ -23,7 +24,6 @@ public class LectureService {
             String sortBy, 
             String search) {
         
-        // sortBy 기본값 설정
         if (sortBy == null || sortBy.isEmpty()) {
             sortBy = "rating";
         }
@@ -31,16 +31,33 @@ public class LectureService {
         return lectureMapper.getLectureList(language, difficulty, tags, timeSlot, sortBy, search);
     }
     
+    // ✅ 상세 조회: 강의 + 섹션 + 레슨 데이터를 조립하여 반환
     public LectureDTO getLectureDetail(Long id) {
-        return lectureMapper.getLectureDetail(id);
+        // 1. 강의 기본 정보 조회
+        LectureDTO lecture = lectureMapper.getLectureDetail(id);
+        
+        if (lecture != null) {
+            // 2. 해당 강의의 섹션 목록 조회
+            List<LectureDTO.SectionDTO> sections = lectureMapper.getSectionsByLectureId(id);
+            
+            if (sections != null && !sections.isEmpty()) {
+                for (LectureDTO.SectionDTO section : sections) {
+                    // 3. 각 섹션에 포함된 레슨 목록 조회 후 세팅
+                    List<LectureDTO.LessonDTO> lessons = lectureMapper.getLessonsBySectionId(section.getSectionId());
+                    section.setLessons(lessons);
+                }
+                // 4. 조립된 섹션 리스트를 강의 DTO에 주입
+                lecture.setSections(sections);
+            }
+        }
+        
+        return lecture;
     }
     
     @Transactional
     public Long createLecture(LectureCreateDTO createDTO) {
-        // 1. language 문자열을 lg_type_id로 변환
         Integer lgTypeId = convertLanguageToId(createDTO.getLanguage());
         
-        // 2. lecture 테이블에 기본 정보 저장 (Map 사용)
         Map<String, Object> lectureParams = new HashMap<>();
         lectureParams.put("mbId", createDTO.getMbId());
         lectureParams.put("title", createDTO.getTitle());
@@ -51,10 +68,8 @@ public class LectureService {
         
         lectureMapper.insertLecture(lectureParams);
         
-        // useGeneratedKeys로 자동 생성된 ID 가져오기
         Long lectureId = ((Number) lectureParams.get("leId")).longValue();
         
-        // 3. 커리큘럼 저장 (sections & lessons)
         if (createDTO.getSections() != null) {
             int sectionOrder = 1;
             for (LectureCreateDTO.SectionDTO section : createDTO.getSections()) {
@@ -66,7 +81,6 @@ public class LectureService {
                 lectureMapper.insertSection(sectionParams);
                 sectionOrder++;
                 
-                // useGeneratedKeys로 자동 생성된 section ID 가져오기
                 Long sectionId = ((Number) sectionParams.get("sectionId")).longValue();
                 
                 int lessonOrder = 1;
@@ -82,7 +96,6 @@ public class LectureService {
             }
         }
         
-        // 4. 스케줄 저장
         if (createDTO.getGeneratedSlots() != null) {
             for (String slot : createDTO.getGeneratedSlots()) {
                 String[] parts = slot.split(" ");
@@ -102,17 +115,15 @@ public class LectureService {
         return lectureId;
     }
     
-    // 언어 문자열을 ID로 변환
     private Integer convertLanguageToId(String language) {
         switch(language) {
-            case "en": return 1; // 영어
-            case "jp": return 2; // 일본어
-            case "cn": return 3; // 중국어
+            case "en": return 1;
+            case "jp": return 2;
+            case "cn": return 3;
             default: return 1;
         }
     }
     
-    // 날짜 문자열 변환 (Jan 20 -> 2024-01-20)
     private String convertToDate(String month, String day) {
         String[] months = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
         int monthNum = 1;
@@ -125,4 +136,4 @@ public class LectureService {
         int year = java.time.Year.now().getValue();
         return String.format("%d-%02d-%02d", year, monthNum, Integer.parseInt(day));
     }
-   }
+}

@@ -122,4 +122,24 @@
         INSERT INTO lecture_schedule (le_id, schedule_date, start_time, end_time, max_students, current_students, is_available)
         VALUES (#{leId}, #{scheduleDate}, #{startTime}, #{endTime}, #{maxStudents}, 0, 1)
     </insert>
+    <select id="getSectionsByLectureId" resultType="com.seesun.dto.lecture.LectureDTO$SectionDTO">
+        SELECT 
+            section_id AS sectionId,
+            title,
+            order_num AS orderNum
+        FROM lecture_section
+        WHERE le_id = #{leId}
+        ORDER BY order_num ASC
+    </select>
+
+    <select id="getLessonsBySectionId" resultType="com.seesun.dto.lecture.LectureDTO$LessonDTO">
+        SELECT 
+            lesson_id AS lessonId,
+            title,
+            duration,
+            order_num AS orderNum
+        FROM lecture_lesson
+        WHERE section_id = #{sectionId}
+        ORDER BY order_num ASC
+    </select>
 </mapper>
