@@ -90,6 +90,7 @@
 		WHERE mb_id = #{mb_id}		
 	</select>
 
+	<!-- 회원 정보 조회 -->
 	<select id="getMyPageInfo" resultType="myPage" parameterType="long">
 		SELECT
 			username,

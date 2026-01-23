@@ -15,9 +15,7 @@ import com.seesun.service.member.MemberService;
 
 import lombok.RequiredArgsConstructor;
 
-// [보안 import]
-// import org.springframework.security.core.annotation.AuthenticationPrincipal;
-// import com.seesun.security.userdetail.CustomUserDetails;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,6 +47,21 @@ public class MemberController {
 
 		return ResponseEntity.ok("회원탈퇴 완료");
 	}
+
+	// [임시 회원탈퇴]
+	// React에서 { data: { password: "..." } } 로 보내면 @RequestBody 로 받는 게 안전.
+	// ======================================================================================================
+	// MemberController.java
+
+	@DeleteMapping("/leave/{mbId}")
+	public ResponseEntity<?> leave(@PathVariable Long mbId, @RequestBody Map<String, Object> json) {
+
+		String password = (String) json.get("password");
+
+		memberService.deleteMember(mbId, password);
+		return ResponseEntity.ok("회원탈퇴 완료");
+	}
+	// ======================================================================================================
 	
 	// 회원정보 수정
 	@PostMapping("/update")
@@ -57,6 +70,15 @@ public class MemberController {
 		
 		return ResponseEntity.ok("회원정보 수정 완료");
 	}
+
+	// [임시 회원정보 수정]
+	// ===========================================================================================
+	@PostMapping("/update/{mbId}")
+	public ResponseEntity<?> update(@PathVariable Long mbId, @RequestBody MyPageUpdateDTO data) {
+		memberService.updateMemberData(mbId, data);
+		return ResponseEntity.ok("회원정보 수정 완료");
+	}
+	// ===========================================================================================
 	
 	// 비밀번호 수정
 	@PostMapping("/updatePassword")
@@ -65,7 +87,16 @@ public class MemberController {
 		
 		return ResponseEntity.ok("비밀번호 수정 완료");
 	}
-	
+
+	// [임시 비밀번호 수정]
+	// ===========================================================================================
+	@PostMapping("/updatePassword/{mbId}")
+	public ResponseEntity<?> updatePassword(@PathVariable Long mbId, @RequestBody PasswordUpdateDTO data) {
+		memberService.updateMemberPassword(mbId, data);
+		return ResponseEntity.ok("비밀번호 수정 완료");
+	}
+	// ===========================================================================================
+
 	// 로그인
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody LoginRequestDTO data) {
