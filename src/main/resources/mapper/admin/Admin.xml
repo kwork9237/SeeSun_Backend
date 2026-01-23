@@ -30,7 +30,7 @@
             attachment,
             req_state as reqState
         FROM request_mento
-        WHERE req_state = 0
+      <!--   WHERE req_state = 0 -->
         ORDER BY req_id DESC
     </select>
 
