@@ -35,11 +35,14 @@
     </select>
 
 	<!-- 멘토 승인 처리  -->
-    <update id="updateRequestStatus" parameterType="int">
-        UPDATE request_mento
-        SET req_state = 1
-        WHERE req_id = #{reqId}
+   <update id="updateRequestStatus" parameterType="int">
+        UPDATE request_mento rm
+        INNER JOIN member m ON rm.mb_id = m.mb_id
+        SET rm.req_state = 1, 
+            m.mb_type_id = 2
+        WHERE rm.req_id = #{reqId}
     </update>
+    
 	
 	<!-- 강의 신고 -->
 	

@@ -27,5 +27,7 @@ public interface AdminMapper {
 	
 	
 	//강의 신고
+	
+	//건의 사항
 
 }
