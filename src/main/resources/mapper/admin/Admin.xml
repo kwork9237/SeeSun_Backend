@@ -41,5 +41,6 @@
         WHERE req_id = #{reqId}
     </update>
 	
+	<!-- 강의 신고 -->
 	
 </mapper>

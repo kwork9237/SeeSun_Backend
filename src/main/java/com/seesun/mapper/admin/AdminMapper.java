@@ -24,5 +24,8 @@ public interface AdminMapper {
 
 	// 멘토 승인 처리
 	int updateRequestStatus(int reqId); 
+	
+	
+	//강의 신고
 
 }

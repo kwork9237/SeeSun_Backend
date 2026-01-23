@@ -38,6 +38,10 @@ public class AdminService {
 	// 멘토승인 처리하기
 	public boolean approveRequest(int reqId) {
 		return adminMapper.updateRequestStatus(reqId) > 0;
+		
+		
+		
+	//강의 신고
 	}
 
 }

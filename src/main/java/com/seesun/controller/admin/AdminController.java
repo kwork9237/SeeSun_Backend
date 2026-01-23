@@ -13,7 +13,7 @@ import com.seesun.dto.admin.AdminDto;
 import com.seesun.dto.admin.MentoRequestDTO;
 import com.seesun.service.admin.AdminService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -53,5 +53,7 @@ public class AdminController {
 	        
 	        return isApproved ? "SUCCESS" : "FAIL";
 	    }
+	    
+	    //강의 신고
 
 }
