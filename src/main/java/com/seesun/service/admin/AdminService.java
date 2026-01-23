@@ -42,6 +42,8 @@ public class AdminService {
 		
 		
 	//강의 신고
+	
+	//건의사항
 	}
 
 }

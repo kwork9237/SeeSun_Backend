@@ -8,7 +8,7 @@
 	<!-- 관리자 메인 -->
 	<select id="countNewMentorRequests" resultType="int">
         SELECT COUNT(*) 
-        FROM request_mento
+        FROM request_mento where req_state = 0
     </select>
     <select id="countReportedLectures" resultType="int">
         SELECT COUNT(*) 
@@ -43,4 +43,6 @@
 	
 	<!-- 강의 신고 -->
 	
+	
+	<!--건의 사항-->
 </mapper>
