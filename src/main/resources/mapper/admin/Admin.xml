@@ -48,4 +48,33 @@
 	
 	
 	<!--건의 사항-->
-</mapper>
+	
+	<!-- 공지사항 목록 -->
+	   <select id="selectNotificationList" resultType="com.seesun.dto.notification.NotificationDTO">
+		SELECT 
+			nt_id AS ntId,
+			mb_id AS mbId,
+			title,
+			content,
+			view_count AS viewCount,
+			created_at AS createdAt,
+			modified_at AS modifiedAt
+		FROM notification
+		ORDER BY nt_id DESC
+	</select>
+
+    <!-- <select id="selectNotificationDetail" resultType="com.seesun.dto.notification.NotificationDTO">
+		SELECT 
+			nt_id AS ntId,
+			mb_id AS mbId,
+			title,
+			content,
+			view_count AS viewCount,
+			created_at AS createdAt,
+			modified_at AS modifiedAt
+		FROM notification
+		WHERE nt_id = #{ntId}
+	</select> -->
+    
+</mapper>	
+	
