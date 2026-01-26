@@ -11,6 +11,7 @@ import com.seesun.repository.webrtc.InMemoryRealtimeSessionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -183,23 +184,35 @@ public class RealtimeSessionService {
     /**
      * 녹화 링크 조회(준비 안 되면 PROCESSING)
      */
+    // ✅ 녹화 상태 조회
     public RecordingResponseDTO getRecording(String sessionId) {
-        RealtimeSession session = sessionRepo.findBySessionId(sessionId)
-                .orElseThrow(() -> new GlobalException(ErrorCode.WEBRTC_INVALID_SESSION));
-
         String url = recordingService.getRecordingUrlIfReady(sessionId);
-
         if (url == null) {
             return RecordingResponseDTO.builder()
                     .status("PROCESSING")
                     .url(null)
                     .build();
         }
-
         return RecordingResponseDTO.builder()
                 .status("READY")
                 .url(url)
                 .build();
+    }
+
+    // ✅ 컨트롤러 download에서 사용할 파일 반환
+    public File getRecordingFile(String sessionId) {
+        // JanusRecordingHttpAdapter의 규칙과 동일해야 함
+        // mp4가 있으면 mp4, 없으면 mjr라도 반환(원하면 mp4만 반환하도록 변경 가능)
+        String dir = System.getProperty("seesun.recording.dir"); // 안쓰면 @Value로 빼도 됨
+        if (dir == null || dir.isBlank()) dir = "/var/janus/recordings";
+
+        File mp4 = new File(dir, "lecture-" + sessionId + ".mp4");
+        if (mp4.exists() && mp4.length() > 0) return mp4;
+
+        File mjr = new File(dir, "lecture-" + sessionId + ".mjr");
+        if (mjr.exists() && mjr.length() > 0) return mjr;
+
+        return null;
     }
 
     // 내부 유틸(권한 검증 / 이름 생성)

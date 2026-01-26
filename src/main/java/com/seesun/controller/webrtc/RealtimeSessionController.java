@@ -9,8 +9,15 @@ import com.seesun.service.webrtc.RealtimeSessionService;
 import com.seesun.service.webrtc.SseEmitterService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import java.io.File;
 
 
 /**
@@ -86,10 +93,28 @@ public class RealtimeSessionController {
         realtimeSessionService.endSession(req.getSessionId(), memberId);
     }
 
+    // ✅ 프론트에서 호출하는 녹화 상태 조회 API
     @GetMapping("/recording")
     public RecordingResponseDTO recording(@RequestParam String sessionId) {
         return realtimeSessionService.getRecording(sessionId);
     }
+
+    // ✅ 녹화 파일 다운로드(또는 브라우저 재생)
+    @GetMapping("/recordings/file")
+    public ResponseEntity<Resource> downloadRecording(@RequestParam String sessionId) {
+        File file = realtimeSessionService.getRecordingFile(sessionId);
+        if (file == null || !file.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Resource resource = new FileSystemResource(file);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=\"" + file.getName() + "\"")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
+
 
     @GetMapping("/events")
     public SseEmitter sse(@RequestParam String sessionId) {
