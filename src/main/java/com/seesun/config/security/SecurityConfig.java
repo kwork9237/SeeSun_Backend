@@ -88,11 +88,16 @@ public class SecurityConfig {
                 // Pre-flight Request 허용
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 
-                    // ▼▼▼ [추가] 결제 관련 API는 무조건 통과! (명시적 허용) ▼▼▼
-                    .requestMatchers("/api/orders/**").permitAll()
+                // 허용된 API 경로
+                // 결제 관련 API
+                .requestMatchers("/api/orders/**").permitAll()
 
-                    // ▼▼▼ [추가] 마이페이지 관련 API는 무조건 통과! (명시적 허용) ▼▼▼
-                    .requestMatchers("/api/member/**").permitAll()
+                // 마이페이지 API
+                .requestMatchers("/api/member/**").permitAll()
+                
+                // WebSocket STOMP 허용
+                .requestMatchers("/ws/**", "/ws").permitAll()
+                .requestMatchers("/pub/**", "/sub/**").permitAll()
 
                 // 비로그인시 모든 API 경로 허용 (임시 조치)
                 .requestMatchers("/api/**").permitAll()
