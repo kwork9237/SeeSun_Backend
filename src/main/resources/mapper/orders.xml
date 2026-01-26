@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seesun.mapper.OrdersMapper">
+
+    <select id="findLectureById" resultType="map" parameterType="long">
+        SELECT title AS title, cost AS cost
+        FROM lecture WHERE le_id = #{le_Id}
+    </select>
+
+    <select id="findMemberById" resultType="map" parameterType="long">
+        SELECT name AS customerName FROM member WHERE mb_id = #{mb_Id}
+    </select>
+
+    <insert id="insertOrder" parameterType="orders">
+        INSERT INTO orders (
+            order_id, mb_id, le_id, cost, title,
+            payment_key, status, created_at, method, approved_at
+        ) VALUES (
+                     #{order_id}, #{mb_id}, #{le_id}, #{cost}, #{title},
+                     NULL, 1, NOW(), NULL, NULL
+                 )
+    </insert>
+
+    <update id="updatePaymentSuccess" parameterType="orders">
+        UPDATE orders
+        SET
+            payment_key = #{payment_key},
+            status = 2,
+            method = #{method},
+            approved_at = NOW()
+        WHERE order_id = #{order_id}
+    </update>
+
+    <select id="findOrderByOrderId" resultType="orders">
+        select * from orders where order_id = #{orderId}
+    </select>
+
+    <insert id="insertEnrollment">
+        insert into member_enrollment (mb_id, le_id) values (#{mb_id}, #{le_id})
+    </insert>
+
+    <select id="getPaymentHistory" resultType="map">
+        SELECT
+            o.order_id,
+            /* 디자인에 맞춰 날짜/시간 분리 */
+            DATE_FORMAT(o.approved_at, '%Y.%m.%d') as date_part,
+            DATE_FORMAT(o.approved_at, '%H:%i') as time_part,
+
+            l.title as lecture_title,
+            o.cost,
+            o.method,      /* 카드, 가상계좌 등 */
+            o.status       /* 2: 결제완료 */
+        FROM orders o
+                 JOIN lecture l ON o.le_id = l.le_id
+        WHERE o.mb_id = #{mb_id}
+          AND o.status = 2  /* 결제 완료된 것만 */
+        ORDER BY o.approved_at DESC
+    </select>
+
+</mapper>

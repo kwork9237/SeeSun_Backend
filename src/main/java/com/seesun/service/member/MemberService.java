@@ -100,5 +100,9 @@ public class MemberService {
 		}
 	}
 
-	
+	// 2026 01 27 수정필요
+	// 내 정보 조회
+//	public MyPageDTO getMyPageInfo(Long mbId) {
+//		return memberMapper.getMyPageInfo(mbId);
+//	}
 }

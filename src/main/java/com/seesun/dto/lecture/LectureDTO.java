@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -60,4 +62,14 @@ public class LectureDTO {
     // availableTime은 이미 있으므로 용도 변경: "09:00,14:00,19:00" 형태로 사용
 
     private Boolean isActive;
+
+    private Long scheduleId;         // 스케줄 고유 ID
+    private String scheduleDate;     // 날짜 (예: "2026-01-24")
+    private String startTime;        // 시작 시간 (예: "14:00")
+    private String endTime;          // 종료 시간 (예: "15:00")
+    private Integer maxStudents;     // 정원 (스케줄별)
+    private Integer currentStudents; // 현재 신청 인원 (스케줄별)
+
+    private String modifiedAt;    // String으로 바꿨는지 확인!
+    private String progressStatus; // 이거 추가했는지 확인!
 }

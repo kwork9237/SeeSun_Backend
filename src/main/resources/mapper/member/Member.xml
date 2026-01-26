@@ -93,7 +93,7 @@
 		FROM member
 		WHERE mb_id = #{mb_id}		
 	</select>
-	
+
 	<!-- 관리자 확인 -->
 	<select id="checkAdmin" resultType="int">
 		SELECT EXISTS (
@@ -103,5 +103,20 @@
 				mb_id = #{mb_id} AND
 				mb_type_id = 0
 		)
+	</select>
+
+	<!-- 2026 01 27 수정필요 -->
+	<!-- 회원 정보 조회 -->
+	<select id="getMyPageInfo" resultType="myPage" parameterType="long">
+		SELECT
+			username,
+			name,
+			nickname,
+			phone,
+			profile_icon,
+			mb_type_id,
+			created_at
+		FROM member
+		WHERE mb_id = #{mb_id}
 	</select>
 </mapper>

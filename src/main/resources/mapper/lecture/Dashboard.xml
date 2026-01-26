@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seesun.mapper.lecture.DashboardMapper">
+
+    <select id="getRecentLecture" resultType="map">
+        SELECT
+            l.le_id,
+            l.title,
+            l.cost,
+            l.difficulty as difficulty_level,
+            m.name as mentor_name,
+
+            /* 스케줄 정보 (없으면 NULL) */
+            DATE_FORMAT(ls.schedule_date, '%Y.%m.%d') as next_date,
+            DATE_FORMAT(ls.start_time, '%H:%i') as next_time
+
+        FROM member_enrollment me
+                 JOIN lecture l ON me.le_id = l.le_id
+                 JOIN member m ON l.mb_id = m.mb_id
+
+            /* 미래 일정(오늘 포함)이 있으면 붙이기 (LEFT JOIN) */
+                 LEFT JOIN lecture_schedule ls ON l.le_id = ls.le_id
+            AND ls.schedule_date >= CURDATE()
+
+        WHERE me.mb_id = #{mb_id}
+          AND l.is_active = 1  /* 종료된 강의는 제외 */
+
+        /* 정렬 마법: 스케줄 있는 것 우선 > 날짜 빠른 것 우선 > 없으면 최신 등록순 */
+        ORDER BY
+            (ls.schedule_date IS NULL) ASC,
+            ls.schedule_date ASC,
+            ls.start_time ASC,
+            me.enroll_id DESC
+            LIMIT 1
+    </select>
+
+</mapper>

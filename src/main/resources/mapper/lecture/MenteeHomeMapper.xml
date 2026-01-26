@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seesun.mapper.lecture.MenteeHomeMapper">
+
+    <select id="selectMenteeSchedules" resultType="com.seesun.dto.lecture.LectureDTO">
+        SELECT
+            s.schedule_id   AS scheduleId,
+            s.le_id         AS leId,
+            l.title         AS title,
+            DATE_FORMAT(s.schedule_date, '%Y-%m-%d') AS scheduleDate,
+            TIME_FORMAT(s.start_time, '%H:%i')       AS startTime,
+            TIME_FORMAT(s.end_time, '%H:%i')         AS endTime,
+            s.max_students      AS maxStudents,
+            s.current_students  AS currentStudents
+        FROM lecture_schedule s
+                 JOIN lecture l ON s.le_id = l.le_id
+                 JOIN orders o ON l.le_id = o.le_id
+        WHERE o.mb_id = #{mbId}
+          AND o.status = 2
+        ORDER BY s.schedule_date ASC, s.start_time ASC
+    </select>
+
+    <select id="selectMenteeLectures" resultType="com.seesun.dto.lecture.LectureDTO">
+        SELECT
+            l.le_id       AS leId,
+            l.mb_id       AS mbId,
+            l.title       AS title,
+            l.content     AS content,
+            l.avg_score   AS avgScore,
+            l.cost        AS cost,
+            l.created_at  AS createdAt,
+
+            DATE_FORMAT(o.created_at, '%Y-%m-%d') AS modifiedAt,
+
+            (CASE
+                 WHEN NOT EXISTS (SELECT 1 FROM lecture_schedule WHERE le_id = l.le_id)
+                     THEN '일정 미정'
+
+                 WHEN (
+                          SELECT MAX(schedule_date)
+                          FROM lecture_schedule
+                          WHERE le_id = l.le_id
+                      ) <![CDATA[ < ]]> CURDATE()
+                     THEN '수강 완료'
+                 ELSE '수강 중'
+                END) AS progressStatus
+
+        FROM lecture l
+                 JOIN orders o ON l.le_id = o.le_id
+        WHERE o.mb_id = #{mbId}
+          AND o.status = 2
+        ORDER BY o.created_at DESC
+    </select>
+
+</mapper>
