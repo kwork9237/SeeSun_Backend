@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.seesun.dto.file.FileSaveResult;
+import com.seesun.dto.file.result.FileSaveResult;
 import com.seesun.global.exception.ErrorCode;
 import com.seesun.global.exception.GlobalException;
 import com.seesun.global.uuid.UUIDUtil;
@@ -65,37 +65,36 @@ public class FileManager {
 	// 파일 삭제
 	public boolean delete(String relativePath) {
 		if (relativePath == null || relativePath.isBlank()) {
-		    throw new IllegalArgumentException("relativePath is blank");
-		  }
-
-		  try {
-		    // basePath + relativePath 결합
-		    Path target = props.getBasePath().resolve(relativePath).normalize();
-
-		    // ⚠️ 경로 탈출 방지 (../../windows 같은 공격 차단)
-		    if (!target.startsWith(props.getBasePath().normalize())) {
-		      throw new IllegalArgumentException("invalid path: " + relativePath);
-		    }
-
-		    // 존재하면 삭제, 없으면 false
-		    return Files.deleteIfExists(target);
-		  } catch (IOException e) {
-		    throw new GlobalException(ErrorCode.FILE_DELETE_FAIL);
-		  }
+			throw new GlobalException(ErrorCode.EMPTY_FILE_PATH);
+		}
+		
+		try {
+			// basePath + relativePath 결합
+			Path target = props.getBasePath().resolve(relativePath).normalize();
+			
+			 // 경로 탈출 방지 (../../windows 같은 공격 차단)
+			if (!target.startsWith(props.getBasePath().normalize())) {
+				throw new GlobalException(ErrorCode.INVALID_FILE_PATH);
+			}
+			
+			// 존재하면 삭제, 없으면 false
+			return Files.deleteIfExists(target);
+		} catch(IOException e) {
+			throw new GlobalException(ErrorCode.FILE_DELETE_FAIL);
+		}
 	}
 	
 
 	// 파일 검증 로직
 	private void validate(MultipartFile file) {
 		// 빈 파일
-	    if (file == null || file.isEmpty()) throw new IllegalArgumentException("FILE_EMPTY");
-	    
-	    //  최대 용량 초과
-	    if (file.getSize() > props.getMaxSize().toBytes()) throw new IllegalArgumentException("FILE_TOO_LARGE");
+	    if (file == null || file.isEmpty()) 
+	    	throw new GlobalException(ErrorCode.FILE_EMPTY);
 	    
 	    // 파일 확장자 오류
 	    String ct = file.getContentType();
-	    if (ct == null || !props.getAllowedTypes().contains(ct)) throw new IllegalArgumentException("FILE_TYPE_NOT_ALLOWED: " + ct);
+	    if (ct == null || !props.getAllowedTypes().contains(ct))
+	    	throw new GlobalException(ErrorCode.DISALLOWED_CONTENT_TYPE);
 	  }
 
 	// 확장자 추출

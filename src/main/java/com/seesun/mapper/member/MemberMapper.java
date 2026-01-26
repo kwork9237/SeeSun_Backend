@@ -30,4 +30,7 @@ public interface MemberMapper {
 	
 	// 비밀번호 조회
 	public String getPasswordByMbId(@Param("mb_id") Long mbId);
+	
+	// 관리자 확인
+	public int checkAdmin(@Param("mb_id") Long mbId);
 }

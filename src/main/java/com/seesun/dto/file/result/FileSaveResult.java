@@ -1,4 +1,4 @@
-package com.seesun.dto.file;
+package com.seesun.dto.file.result;
 
 // 파일 저장 결과
 public record FileSaveResult(

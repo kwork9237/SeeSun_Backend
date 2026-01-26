@@ -93,4 +93,15 @@
 		FROM member
 		WHERE mb_id = #{mb_id}		
 	</select>
+	
+	<!-- 관리자 확인 -->
+	<select id="checkAdmin" resultType="int">
+		SELECT EXISTS (
+			SELECT 1
+			FROM member
+			WHERE
+				mb_id = #{mb_id} AND
+				mb_type_id = 0
+		)
+	</select>
 </mapper>

@@ -31,6 +31,31 @@
 	<delete id="deleteFileData">
 		DELETE FROM file_list
 		WHERE
-			mb_id = #{mb_id}
+			mb_id = #{mb_id} AND
+			type_id = #{type_id} AND
+			relative_path = #{relative_path}
 	</delete>
+	
+	<!-- 파일 경로 가져오기 -->
+	<select id="getFilePath">
+		SELECT relative_path FROM file_list
+		WHERE
+			mb_id = #{mb_id} AND
+			type_id = #{type_id}
+	</select>
+	
+	<!-- 파일 타입별 목록 가져오기 (만든 시간순) -->
+	<select id="getFileListByType" resultType="fileDataResponse">
+		SELECT file_id, original_name, size, created_at
+		FROM file_list
+		WHERE type_id = #{type_id}
+		ORDER BY created_at DESC
+	</select>
+	
+	<!-- 다운로드 전용 파일 데이터 -->
+	<select id="getFileForDownload" resultType="fileDownload">
+		SELECT file_id, mb_id, original_name, stored_name, relative_path, size, ext
+		FROM file_list
+		WHERE file_id = #{file_id}
+	</select>
 </mapper>

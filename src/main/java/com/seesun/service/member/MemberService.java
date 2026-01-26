@@ -21,6 +21,7 @@ import com.seesun.mapper.member.MemberMapper;
 import com.seesun.security.jwt.JwtTokenProvider;
 import com.seesun.security.userdetail.CustomUserDetails;
 import com.seesun.service.auth.MemberCredentialService;
+import com.seesun.service.file.FileService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,7 +33,7 @@ public class MemberService {
 	private final PasswordEncoder pwEncoder;
 	private final JwtTokenProvider jwtProvider;
 	private final MemberMapper memberMapper;
-
+	private final FileService fileService;
 	
 	// 회원가입
 	@Transactional
@@ -51,7 +52,7 @@ public class MemberService {
 		// 멘토일 경우, 파일 저장
 		if(file != null && !file.isEmpty()) {
 			// 회원 mento_request에 등록
-			
+			fileService.save(data.getMbId(), "MENTO_REQUEST", file);
 		}
 	}
 	
