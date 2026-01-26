@@ -12,6 +12,7 @@ import lombok.Setter;
 @Setter
 @Alias("memberJoin")
 public class MemberJoinDTO {
+	private Long mbId;			// 회원가입후 바로 사용하기 위함.
 	@JsonProperty("email")		// Front에서는 Email과 매핑됨
 	private String username;	// ID
 	private String password;	// PW

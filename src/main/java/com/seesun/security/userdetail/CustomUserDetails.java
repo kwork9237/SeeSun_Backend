@@ -29,10 +29,10 @@ public class CustomUserDetails implements UserDetails {
 	
 	// DB에서 가져온 DTO를 CustomUserDetails 로 변환하는 생성자.
 	public CustomUserDetails(AuthenticationDTO member) {
-		this.mbId = member.getMb_id();
+		this.mbId = member.getMbId();
 		this.username = member.getUsername();
 		this.password = member.getPassword();
-		this.mbTypeId = member.getMb_type_id();
+		this.mbTypeId = member.getMbTypeId();
 	}
 	
 	@Override

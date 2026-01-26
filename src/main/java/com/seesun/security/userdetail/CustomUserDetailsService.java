@@ -24,10 +24,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 			throw new UsernameNotFoundException("사용자 조회 실패 : " + username);
 		
 		return new CustomUserDetails(
-				mb.getMb_id(),
+				mb.getMbId(),
 				mb.getUsername(),
 				mb.getPassword(),
-				mb.getMb_type_id()
+				mb.getMbTypeId()
 			);
 	}
 }

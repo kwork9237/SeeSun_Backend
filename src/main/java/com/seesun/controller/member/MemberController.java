@@ -1,5 +1,6 @@
 package com.seesun.controller.member;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -8,7 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.seesun.dto.member.request.EmailVerifyRequestDTO;
 import com.seesun.dto.member.request.LeaveRequestDTO;
@@ -26,10 +29,20 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 	private final MemberService memberService;
 	
-	// 회원가입
+	// 회원가입 (멘티)
 	@PostMapping("/join")
-	public ResponseEntity<?> signUp(@RequestBody MemberJoinDTO data) {
-		memberService.insertMember(data);
+	public ResponseEntity<?> signUpMember(@RequestBody MemberJoinDTO data) {
+	    memberService.insertMember(data, null);
+	    return ResponseEntity.ok("회원가입 성공");
+	}
+	
+	
+	// 회원가입 (멘토)
+	@PostMapping(value = "/join-mentor", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<?> signUp(
+			@RequestPart("data")  MemberJoinDTO data, 
+			@RequestPart(value = "file", required = false) MultipartFile file) {
+		memberService.insertMember(data, file);
 		
 		return ResponseEntity.ok("회원가입 성공");
 	}

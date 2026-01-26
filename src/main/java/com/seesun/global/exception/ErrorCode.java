@@ -10,6 +10,16 @@ public enum ErrorCode {
 	INVALID_REQUEST(401, "U001", "잘못된 입력"),
 	UNAUTHORIZED(401, "U002", "로그인 상태에서만 가능합니다."),
 	
+	// 파일 관련 오류
+	FILE_SAVE_FAIL(500, "F001", "파일 저장 실패"),
+	FILE_DELETE_FAIL(500, "F002", "파일 삭제 실패"),
+	INCORRECT_FILE_TYPE(401, "F003", "올바르지 않은 파일 타입"),
+	FILE_NOT_FOUND(500, "F004", "존재하지 않는 파일"),
+	
+	// DB 관련 오류
+	DATABASE_INSERT_ERROR(500, "D001", "데이터 입력 실패"),
+	DATABASE_DELETE_ERROR(500, "D002", "데이터 삭제 실패"),
+	
 	// 회원 관련 오류
 	IDPW_NOT_MATCH(401, "M001", "아이디 또는 비밀번호 오류"),
 	PASSWORD_NOT_MATCH(401, "M002", "비밀번호가 일치하지 않습니다."),

@@ -10,8 +10,8 @@ import lombok.Setter;
 @Setter
 @Alias("authentication")
 public class AuthenticationDTO {
-	private Long mb_id;
+	private Long mbId;
 	private String username;
 	private String password;
-	private short mb_type_id;
+	private short mbTypeId;
 }

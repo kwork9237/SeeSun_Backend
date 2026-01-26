@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<!-- file mapper이랑 연동예정 -->
+<mapper namespace="com.seesun.mapper.file.FileMapper">
+	<!-- 파일정보 입력  -->
+	<insert id="insertFileData" parameterType="fileData">
+		INSERT INTO file_list (
+			mb_id,
+			original_name,
+			stored_name,
+			relative_path,
+			size,
+			ext,
+			type_id
+		)
+		VALUES (
+			#{mb_id},
+			#{original_name},
+			#{stored_name},
+			#{relative_path},
+			#{size},
+			#{ext},
+			#{type_id}
+		)
+	</insert>
+	
+	<!-- 파일정보 삭제 -->
+	<delete id="deleteFileData">
+		DELETE FROM file_list
+		WHERE
+			mb_id = #{mb_id}
+	</delete>
+</mapper>

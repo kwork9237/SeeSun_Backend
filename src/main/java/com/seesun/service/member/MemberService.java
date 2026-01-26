@@ -10,6 +10,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.seesun.dto.member.request.LoginRequestDTO;
 import com.seesun.dto.member.request.MemberJoinDTO;
@@ -35,7 +36,8 @@ public class MemberService {
 	
 	// 회원가입
 	@Transactional
-	public void insertMember(MemberJoinDTO data) {
+	public void insertMember(MemberJoinDTO data, MultipartFile file) {
+		// 회원 데이터 저장
 		try {
 			// 비밀번호 암호화
 			data.setPassword(pwEncoder.encode(data.getPassword()));
@@ -44,6 +46,12 @@ public class MemberService {
 			memberMapper.insertMember(data);
 		} catch(DuplicateKeyException e) {
 			throw new GlobalException(ErrorCode.UNKNOWN);
+		}
+		
+		// 멘토일 경우, 파일 저장
+		if(file != null && !file.isEmpty()) {
+			// 회원 mento_request에 등록
+			
 		}
 	}
 	

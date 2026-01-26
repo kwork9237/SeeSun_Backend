@@ -6,13 +6,17 @@
 <mapper namespace="com.seesun.mapper.member.MemberMapper">
 	<!-- 로그인 시 사용 (Username 으로 회원 특정 데이터) -->
 	<select id="getAuthenticationByUsername" resultType="authentication">
-		SELECT mb_id, username, password, mb_type_id
+		SELECT
+			mb_id AS mbId,
+			username,
+			password,
+			mb_type_id AS mbTypeId
 		FROM member
 		WHERE username = #{username}
 	</select>
 	
 	<!-- 회원가입 -->
-	<insert id="insertMember" parameterType="memberJoin">
+	<insert id="insertMember" parameterType="memberJoin" useGeneratedKeys="true" keyProperty="mbId">
 		INSERT INTO member (
 			username,
 			password,
