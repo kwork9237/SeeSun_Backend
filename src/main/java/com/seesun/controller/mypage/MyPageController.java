@@ -42,4 +42,5 @@ public class MyPageController {
 	public ResponseEntity<?> getMemberTypeId(@AuthenticationPrincipal CustomUserDetails user) {
 		return ResponseEntity.ok(user.getMbTypeId());
 	}
+	
 }

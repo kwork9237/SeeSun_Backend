@@ -40,8 +40,8 @@ public class FileController {
 	// 디버그 테스트 용도
 	// 실제로는 controller 대신 service layer에서 호출
 	
-	private final FileService fileService;
-	private final FileProperties fileProperties;
+//	private final FileService fileService;
+//	private final FileProperties fileProperties;
 
 
 //	@PostMapping(value = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
