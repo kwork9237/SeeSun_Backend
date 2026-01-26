@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seesun.mapper.lecture.MentoHomeMapper">
+
+    <select id="selectMentoSchedules" resultType="com.seesun.dto.lecture.LectureDTO">
+        SELECT
+            s.schedule_id   AS scheduleId,
+            s.le_id         AS leId,
+            l.title         AS title,
+            DATE_FORMAT(s.schedule_date, '%Y-%m-%d') AS scheduleDate,
+            TIME_FORMAT(s.start_time, '%H:%i')       AS startTime,
+            TIME_FORMAT(s.end_time, '%H:%i')         AS endTime,
+            s.max_students      AS maxStudents
+        FROM lecture_schedule s
+        JOIN lecture l ON s.le_id = l.le_id
+        WHERE l.mb_id = #{mbId} AND s.is_available = 1
+        ORDER BY s.schedule_date ASC, s.start_time ASC
+    </select>
+
+    <select id="selectMentoLectures" resultType="com.seesun.dto.lecture.LectureDTO">
+        SELECT
+            l.le_id       AS leId,
+            l.title       AS title,
+            l.content     AS content,
+            l.avg_score   AS avgScore,
+            l.cost        AS cost,
+            l.is_active   AS isActive,
+
+            /* [집계 1] 현재 실제 수강생 수 (결제완료 상태인 주문 건수) */
+            (SELECT COUNT(*)
+             FROM orders o
+             WHERE o.le_id = l.le_id
+               AND o.status = 2) AS currentStudents,  /* [집계 2] 최대 정원 (스케줄 중 가장 큰 값) */
+            /* 스케줄이 아직 없는 강의는 0으로 표시 (IFNULL 처리) */
+            IFNULL(
+                    (SELECT MAX(max_students)
+                     FROM lecture_schedule
+                     WHERE le_id = l.le_id),
+                    0
+            ) AS maxStudents
+
+        FROM lecture l
+        WHERE l.mb_id = #{mbId}
+        ORDER BY l.created_at DESC
+    </select>
+
+</mapper>
