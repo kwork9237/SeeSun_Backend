@@ -38,7 +38,7 @@ public class AdminService {
     // 멘토승인 처리하기
     public boolean approveRequest(int reqId) {
         return adminMapper.updateRequestStatus(reqId) > 0;
-    } // approveRequest 메서드 종료 괄호 위치 주의
+    }
 
     // 강의 신고
     
@@ -46,19 +46,23 @@ public class AdminService {
     
     // 공지 사항
     
-    // [수정됨] 1. 공지사항 전체 목록 조회
-    // static 제거, Object 선언 제거, 메서드 이름 맞춤(findAll -> selectNotificationList)
+    // 1. 공지사항 전체 목록 조회
     public List<NotificationDTO> getAllNotifications() {
         return adminMapper.selectNotificationList();
     }
     
-    //공지 사항 작성
+    // 공지 사항 작성
     public void createNotification(NotificationDTO dto) {
         adminMapper.insertNotification(dto);
     }
- //공지사항 상세 조회
+
+    // [수정] 공지사항 상세 조회 + 조회수 증가
     public NotificationDTO getNotificationDetail(Long ntId) {
+        
+        // 1. 조회수 증가 (DB 업데이트)
+        adminMapper.increaseViewCount(ntId);
+        
+        // 2. 상세 정보 가져오기 (조회 후 반환)
         return adminMapper.selectNotificationDetail(ntId);
     }
-
 }

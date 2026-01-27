@@ -23,6 +23,8 @@ public interface AdminMapper {
 
     NotificationDTO selectNotificationDetail(Long ntId);
 	void insertNotification(NotificationDTO dto);
+			
+	void increaseViewCount(Long ntId);
 	
 	
 	

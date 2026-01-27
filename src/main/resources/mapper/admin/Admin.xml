@@ -94,7 +94,14 @@
 			modified_at AS modifiedAt
 		FROM notification
 		WHERE nt_id = #{ntId}
+		
 	</select>
-    
-</mapper>	
+	<!-- 조회수 증가 -->
+	<update id="increaseViewCount" parameterType="Long">
+		UPDATE notification
+		SET view_count = view_count + 1
+		WHERE nt_id = #{ntId}
+	</update>
+	
+</mapper>
 	
