@@ -46,12 +46,12 @@ public class LectureController {
      */
     @GetMapping
     public ResponseEntity<List<LectureDTO>> getLectureList(
-            @RequestParam(required = false) String language,
-            @RequestParam(required = false) Integer difficulty,
-            @RequestParam(required = false) String tags,
-            @RequestParam(required = false) String timeSlot,
-            @RequestParam(required = false) String sortBy,
-            @RequestParam(required = false) String search) {
+            @RequestParam(name = "language", required = false) String language,
+            @RequestParam(name = "difficulty", required = false) Integer difficulty,
+            @RequestParam(name = "tags", required = false) String tags,
+            @RequestParam(name = "timeSlot", required = false) String timeSlot,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "search", required = false) String search) {
         
         List<LectureDTO> lectures = lectureService.getLectureList(language, difficulty, tags, timeSlot, sortBy, search);
         return ResponseEntity.ok(lectures);
