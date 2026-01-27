@@ -70,12 +70,24 @@ public class AdminController {
 	        System.out.println("공지사항 목록:"+ list);
 	        return ResponseEntity.ok(list);
 	    }
-	    
+	    //공지 사항 작성
 	    @PostMapping("/notices")
 	    public ResponseEntity<String> createNotification(@RequestBody NotificationDTO dto) {
 	        System.out.println("공지사항 작성 요청: " + dto);
 	        adminService.createNotification(dto); // 서비스 호출
 	        return ResponseEntity.ok("SUCCESS");
 	    }
+	    
+	 //  공지사항 상세 조회
+	 // 4. 공지사항 상세 조회
+	    @GetMapping("/notices/{ntId}")
+	    // 👇 아래 줄을 수정하세요: @PathVariable("ntId") 라고 명시해야 합니다.
+	    public ResponseEntity<NotificationDTO> getNotificationDetail(@PathVariable("ntId") Long ntId) {
+	        System.out.println("공지사항 상세 조회 요청: " + ntId);
+	        NotificationDTO notice = adminService.getNotificationDetail(ntId);
+	        return ResponseEntity.ok(notice);
+	    }
 
-}
+	}
+
+

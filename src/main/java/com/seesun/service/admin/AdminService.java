@@ -51,16 +51,14 @@ public class AdminService {
     public List<NotificationDTO> getAllNotifications() {
         return adminMapper.selectNotificationList();
     }
-
-    // [수정됨] 2. 공지사항 상세 조회
-    // static 제거, 메서드 이름 맞춤(findById -> selectNotificationDetail)
-   // public NotificationDTO getNotificationDetail(Long ntId) {
-       // return adminMapper.selectNotificationDetail(ntId);
-   // }
     
     //공지 사항 작성
     public void createNotification(NotificationDTO dto) {
         adminMapper.insertNotification(dto);
+    }
+ //공지사항 상세 조회
+    public NotificationDTO getNotificationDetail(Long ntId) {
+        return adminMapper.selectNotificationDetail(ntId);
     }
 
 }

@@ -82,5 +82,19 @@
         )
     </insert>
     
+    <!-- 공지사항 상세 조회 -->
+    <select id="selectNotificationDetail" resultType="com.seesun.dto.notification.NotificationDTO">
+		SELECT 
+			nt_id AS ntId,
+			mb_id AS mbId,
+			title,
+			content,
+			view_count AS viewCount,
+			created_at AS createdAt,
+			modified_at AS modifiedAt
+		FROM notification
+		WHERE nt_id = #{ntId}
+	</select>
+    
 </mapper>	
 	

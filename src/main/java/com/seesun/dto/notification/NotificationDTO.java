@@ -14,3 +14,4 @@ public class NotificationDTO {
     private LocalDateTime modifiedAt; // modified_at (수정일)
 
 }
+					
