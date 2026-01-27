@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-  
 <mapper namespace="com.seesun.mapper.lecture.LectureMapper">
 
     <resultMap id="LectureResultMap" type="com.seesun.dto.lecture.LectureDTO">
@@ -18,111 +17,40 @@
         <result property="categoryName" column="category_name" />
         <result property="studentCount" column="student_count" />
         <result property="reviewCount" column="review_count" />
-        
         <result property="totalHours" column="total_hours" />
         <result property="availableTime" column="available_time" />
-        
-        <!-- ✅ 추가된 필드 -->
         <result property="startDate" column="start_date" />
         <result property="endDate" column="end_date" />
         <result property="availableDays" column="available_days" />
     </resultMap>
 
     <select id="getLectureList" resultMap="LectureResultMap">
-        SELECT 
-            l.le_id, l.title, l.content, l.cost, l.avg_score, l.difficulty, l.view_count, l.is_active,
-            m.mb_id, m.name AS instructor_name, m.profile_icon,
-            c.name AS category_name,
-            (SELECT COUNT(*) FROM member_enrollment e WHERE e.le_id = l.le_id) AS student_count,
-            l.view_count AS review_count,
-            
-            /* 총 시간(시간 단위 변환) */
-            (SELECT ROUND(IFNULL(SUM(ll.duration), 0) / 60, 1) 
-             FROM lecture_section ls 
-             JOIN lecture_lesson ll ON ls.section_id = ll.section_id 
-             WHERE ls.le_id = l.le_id) AS total_hours,
-            
-            /* 주요 시간 포맷팅 */
-            (SELECT CONCAT(DATE_FORMAT(start_time, '%H:%i'), ' ~ ', DATE_FORMAT(end_time, '%H:%i'))
-             FROM lecture_schedule WHERE le_id = l.le_id LIMIT 1) AS available_time,
-            
-            /* ✅ 강의 시작일 */
-            (SELECT MIN(schedule_date) FROM lecture_schedule WHERE le_id = l.le_id) AS start_date,
-            
-            /* ✅ 강의 종료일 */
-            (SELECT MAX(schedule_date) FROM lecture_schedule WHERE le_id = l.le_id) AS end_date,
-            
-            /* ✅ 요일 정보 (0=일요일 ~ 6=토요일) */
-            (SELECT GROUP_CONCAT(DISTINCT (DAYOFWEEK(schedule_date) - 1) ORDER BY DAYOFWEEK(schedule_date) SEPARATOR ',')
-             FROM lecture_schedule WHERE le_id = l.le_id) AS available_days
-             
-        FROM lecture l
-        LEFT JOIN member m ON l.mb_id = m.mb_id
-        LEFT JOIN language_category c ON l.lg_type_Id = c.lg_type_id
-        WHERE l.is_active = 1
-        <if test="language != null and language != '' and language != '언어'"> AND c.name = #{language} </if>
-        <if test="difficulty != null"> AND l.difficulty = #{difficulty} </if>
-        <if test="search != null and search != ''"> 
-            AND (l.title LIKE CONCAT('%', #{search}, '%') OR l.content LIKE CONCAT('%', #{search}, '%')) 
-        </if>
-        <choose>
-            <when test="sortBy == 'rating'"> ORDER BY l.avg_score DESC </when>
-            <when test="sortBy == 'price'"> ORDER BY l.cost ASC </when>
-            <otherwise> ORDER BY l.created_at DESC </otherwise>
-        </choose>
-    </select>
+        </select>
 
     <select id="getLectureDetail" resultMap="LectureResultMap">
-        SELECT 
-            l.le_id, l.title, l.content, l.cost, l.avg_score, l.difficulty, l.view_count, l.is_active,
-            m.mb_id, m.name AS instructor_name, m.profile_icon,
-            c.name AS category_name,
-            (SELECT COUNT(*) FROM member_enrollment e WHERE e.le_id = l.le_id) AS student_count,
-            l.view_count AS review_count,
-            
-            /* 총 시간 */
-            (SELECT ROUND(IFNULL(SUM(ll.duration), 0) / 60, 1) 
-             FROM lecture_section ls JOIN lecture_lesson ll ON ls.section_id = ll.section_id 
-             WHERE ls.le_id = l.le_id) AS total_hours,
-            
-            /* ✅ 모든 시간대 추출 (중복 제거) */
-            (SELECT GROUP_CONCAT(DISTINCT DATE_FORMAT(start_time, '%H:%i') ORDER BY start_time SEPARATOR ',')
-             FROM lecture_schedule WHERE le_id = l.le_id) AS available_time,
-            
-            /* ✅ 강의 시작일 */
-            (SELECT MIN(schedule_date) FROM lecture_schedule WHERE le_id = l.le_id) AS start_date,
-            
-            /* ✅ 강의 종료일 */
-            (SELECT MAX(schedule_date) FROM lecture_schedule WHERE le_id = l.le_id) AS end_date,
-            
-            /* ✅ 요일 정보 (0=일요일 ~ 6=토요일) */
-            (SELECT GROUP_CONCAT(DISTINCT (DAYOFWEEK(schedule_date) - 1) ORDER BY DAYOFWEEK(schedule_date) SEPARATOR ',')
-             FROM lecture_schedule WHERE le_id = l.le_id) AS available_days
-             
-        FROM lecture l
-        LEFT JOIN member m ON l.mb_id = m.mb_id
-        LEFT JOIN language_category c ON l.lg_type_Id = c.lg_type_id
-        WHERE l.le_id = #{id}
-    </select>
+        </select>
 
-    <insert id="insertLecture" useGeneratedKeys="true" keyProperty="leId" keyColumn="le_id">
+    <insert id="insertLecture" useGeneratedKeys="true" keyProperty="dto.leId" keyColumn="le_id">
         INSERT INTO lecture (mb_id, title, content, lg_type_Id, cost, difficulty, is_active)
-        VALUES (#{mbId}, #{title}, #{content}, #{lgTypeId}, #{cost}, #{difficulty}, 1)
+        VALUES (#{dto.mbId}, #{dto.title}, #{dto.description}, #{lgTypeId}, #{dto.price}, #{dto.level}, 1)
     </insert>
     
-    <insert id="insertSection" useGeneratedKeys="true" keyProperty="sectionId" keyColumn="section_id">
-        INSERT INTO lecture_section (le_id, title, order_num) VALUES (#{leId}, #{title}, #{orderNum})
+    <insert id="insertSection" useGeneratedKeys="true" keyProperty="section.sectionId" keyColumn="section_id">
+        INSERT INTO lecture_section (le_id, title, order_num) 
+        VALUES (#{leId}, #{section.title}, #{orderNum})
     </insert>
     
     <insert id="insertLesson">
-        INSERT INTO lecture_lesson (section_id, title, duration, order_num) VALUES (#{sectionId}, #{title}, #{duration}, #{orderNum})
+        INSERT INTO lecture_lesson (section_id, title, duration, order_num) 
+        VALUES (#{sectionId}, #{title}, #{duration}, #{orderNum})
     </insert>
     
     <insert id="insertSchedule">
         INSERT INTO lecture_schedule (le_id, schedule_date, start_time, end_time, max_students, current_students, is_available)
         VALUES (#{leId}, #{scheduleDate}, #{startTime}, #{endTime}, #{maxStudents}, 0, 1)
     </insert>
-    <select id="getSectionsByLectureId" resultType="com.seesun.dto.lecture.LectureDTO$SectionDTO">
+
+    <select id="getSectionsByLectureId" resultType="com.seesun.dto.lecture.SectionDTO">
         SELECT 
             section_id AS sectionId,
             title,
@@ -132,7 +60,7 @@
         ORDER BY order_num ASC
     </select>
 
-    <select id="getLessonsBySectionId" resultType="com.seesun.dto.lecture.LectureDTO$LessonDTO">
+    <select id="getLessonsBySectionId" resultType="com.seesun.dto.lecture.LessonDTO">
         SELECT 
             lesson_id AS lessonId,
             title,

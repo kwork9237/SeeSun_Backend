@@ -11,46 +11,26 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class LectureCreateDTO {
-    
-    // Step 1: 기본 정보
+    // 기본 정보
     private String title;
-    private String language;      // "en", "jp", "cn"
-    private Integer level;        // 1, 2, 3
+    private String language;
+    private Integer level;
     private String description;
     
-    // Step 2: 커리큘럼
+    // 분리된 SectionDTO 사용
     private List<SectionDTO> sections;
     
-    // Step 3: 스케줄 & 가격
+    // 스케줄 및 가격
     private String startDate;
     private String endDate;
     private List<String> selectedDays;
     private String startTime;
     private String endTime;
     private Integer maxStudents;
-    private List<String> generatedSlots;
     private Integer price;
+
+    private List<String> generatedSlots; 
     
-    // 멘토 ID (로그인한 사용자)
-    private Long mbId;
-    
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class SectionDTO {
-        private String id;  // UUID (프론트엔드용)
-        private String title;
-        private List<LessonDTO> lessons;
-    }
-    
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class LessonDTO {
-        private String id;  // UUID (프론트엔드용)
-        private String title;
-        private String duration;  // 프론트에서 String으로 오므로
-    }
+    private Long mbId; // 작성자 ID
+    private Long leId; // DB 입력 후 반환받을 강의 ID
 }

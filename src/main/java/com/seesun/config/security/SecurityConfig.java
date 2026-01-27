@@ -95,8 +95,8 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             
-            // 5. JWT 필터 등록
-            .addFilterBefore(
+              // 5. JWT 필터 등록(임시로 주석처리)
+            	.addFilterBefore(
             		new JwtAuthenticationFilter(jwtTokenProvider, userDetailService), 
             		UsernamePasswordAuthenticationFilter.class
         		);

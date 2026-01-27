@@ -1,8 +1,6 @@
 package com.seesun.mapper.lecture;
 
 import java.util.List;
-import java.util.Map;
-
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import com.seesun.dto.lecture.*;
@@ -10,7 +8,7 @@ import com.seesun.dto.lecture.*;
 @Mapper
 public interface LectureMapper {
     
-    // 강의 목록 조회
+    // 1. 강의 목록 조회
     List<LectureDTO> getLectureList(
         @Param("language") String language,
         @Param("difficulty") Integer difficulty,
@@ -20,20 +18,20 @@ public interface LectureMapper {
         @Param("search") String search
     );
     
-    // 강의 상세 정보(기본) 조회
+    // 2. 강의 상세 정보 조회
     LectureDTO getLectureDetail(@Param("id") Long id);
 
-    // ✅ 추가: 특정 강의에 속한 모든 섹션 조회
-    List<LectureDTO.SectionDTO> getSectionsByLectureId(@Param("leId") Long leId);
-
-    // ✅ 추가: 특정 섹션에 속한 모든 레슨 조회
-    List<LectureDTO.LessonDTO> getLessonsBySectionId(@Param("sectionId") Long sectionId);
+    // 3. 상세 조회용 커리큘럼 로직 (분리된 DTO 클래스 사용)
+    List<SectionDTO> getSectionsByLectureId(@Param("leId") Long leId);
+    List<LessonDTO> getLessonsBySectionId(@Param("sectionId") Long sectionId);
     
-    // 강의 생성 - Map으로 받기
-    void insertLecture(Map<String, Object> params);
+    // 4. 강의 생성 (Map 대신 DTO와 전용 파라미터 사용)
+    void insertLecture(@Param("dto") LectureCreateDTO dto, @Param("lgTypeId") Integer lgTypeId);
     
-    void insertSection(Map<String, Object> params);
+    // 5. 섹션 생성 (개별 파라미터 매핑)
+    void insertSection(@Param("leId") Long leId, @Param("section") SectionDTO section, @Param("orderNum") int orderNum);
     
+    // 6. 레슨 생성
     void insertLesson(
         @Param("sectionId") Long sectionId,
         @Param("title") String title,
@@ -41,6 +39,7 @@ public interface LectureMapper {
         @Param("orderNum") Integer orderNum
     );
     
+    // 7. 스케줄 생성
     void insertSchedule(
         @Param("leId") Long leId,
         @Param("scheduleDate") String scheduleDate,
