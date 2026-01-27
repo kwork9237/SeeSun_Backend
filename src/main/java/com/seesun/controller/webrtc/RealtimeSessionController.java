@@ -5,10 +5,12 @@ import com.seesun.dto.webrtc.request.BootstrapRequestDTO;
 import com.seesun.dto.webrtc.request.EndSessionRequestDTO;
 import com.seesun.dto.webrtc.response.BootstrapResponseDTO;
 import com.seesun.dto.webrtc.response.RecordingResponseDTO;
+import com.seesun.service.webrtc.JanusRoomService;
 import com.seesun.service.webrtc.RealtimeSessionService;
 import com.seesun.service.webrtc.SseEmitterService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.File;
+import java.util.UUID;
 
 
 /**
@@ -33,6 +36,13 @@ public class RealtimeSessionController {
     private final RealtimeSessionService realtimeSessionService;
     private final SseEmitterService sseEmitterService;
 
+    // 🔥 부족해서 오류난 부분 — 필드 추가
+    private final JanusRoomService janusRoomService;
+
+    @Value("${seesun.janus.base-url}")
+    private String janusUrl;
+
+
     // 기존 멘토 / 멘티 (서버가 역할 구분할때 사용 지우지 마세요)
 //    @PostMapping("/bootstrap")
 //    public BootstrapResponseDTO bootstrap(@RequestBody BootstrapRequestDTO req) {
@@ -46,42 +56,44 @@ public class RealtimeSessionController {
     public BootstrapResponseDTO bootstrap(@RequestBody BootstrapRequestDTO req,
                                           HttpServletRequest servletReq) {
 
-        System.out.println("test");
+        long lectureId = req.getLectureId();
 
-        // 기존 로그인 방식 (없으면 null)
-        Long memberId = getLoginMemberId();
+        // 방이 없으면 Janus에 방 생성
+        int roomId = janusRoomService.ensureRoomExists(lectureId);
 
-        // URL 기반 역할 강제 (테스트 모드)
-        String uri = servletReq.getRequestURI();
+        String sessionId = UUID.randomUUID().toString();
+        String displayName = "mentor-" + lectureId + "-" + (int) (Math.random() * 99999);
 
-        if (uri.contains("/mentor/")) {
-            // 멘토 강제
-            memberId = 1L;
-        }
-
-        if (uri.contains("/mentee/")) {
-            // 멘티 익명 허용
-            if (memberId == null) memberId = -1L;
-        }
-
-        return realtimeSessionService.bootstrap(req.getLectureId(), memberId);
+        return new BootstrapResponseDTO(
+                sessionId,
+                String.valueOf(roomId),
+                janusUrl,
+                "MENTOR",
+                displayName,
+                displayName
+        );
     }
 
     // 테스트 용도(멘토 / 멘티 페이지 분리시)
     @PostMapping("/join")
-    public BootstrapResponseDTO join(
-            @RequestBody BootstrapRequestDTO req,
-            HttpServletRequest servletReq
-    ) {
-        Long memberId = getLoginMemberId();
+    public BootstrapResponseDTO join(@RequestBody BootstrapRequestDTO req,
+                                     HttpServletRequest servletReq) {
 
-        // URL 기반으로 멘티 강제
-        String uri = servletReq.getRequestURI();
-        if (uri.contains("/mentee/")) {
-            memberId = -1L; // 익명 멘티
-        }
+        long lectureId = req.getLectureId();
 
-        return realtimeSessionService.bootstrap(req.getLectureId(), memberId);
+        int roomId = janusRoomService.ensureRoomExists(lectureId);
+
+        String sessionId = UUID.randomUUID().toString();
+        String displayName = "mentee-" + lectureId + "-" + (int) (Math.random() * 99999);
+
+        return new BootstrapResponseDTO(
+                sessionId,
+                String.valueOf(roomId),
+                janusUrl,
+                "MENTEE",
+                displayName,
+                null
+        );
     }
 
 
