@@ -104,6 +104,20 @@
 				mb_type_id = 0
 		)
 	</select>
+	
+	<!--  -->
+	<insert id="insertMentoRequest">
+		INSERT INTO request_mento (
+			mb_id,
+			details,
+			file_id
+		)
+		VALUES (
+			#{mb_id},
+			#{details},
+			#{file_id}
+		)
+	</insert>
 
 	<!-- 2026 01 27 수정필요 -->
 	<!-- 회원 정보 조회 -->

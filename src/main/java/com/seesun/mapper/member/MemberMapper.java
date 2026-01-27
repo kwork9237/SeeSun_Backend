@@ -33,6 +33,9 @@ public interface MemberMapper {
 
 	// 관리자 확인
 	public int checkAdmin(@Param("mb_id") Long mbId);
+	
+	// 멘토 요청 추가
+	public void insertMentoRequest();
 
 	// 2026 01 27 수정필요
 	// 내 정보 조회 (마이페이지용)

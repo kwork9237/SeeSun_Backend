@@ -1,9 +1,14 @@
 package com.seesun.dto.admin;
 
-import lombok.Data;
+import org.apache.ibatis.type.Alias;
 
-@Data	
-public class MentoRequestDTO {
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Alias("mentoRequestList")
+public class MentoRequestListDTO {
 	private int reqId;        // req_id (PK)
     private String mbId;      // mb_id (신청자 ID)
     private String details;   // details (요청 내용)

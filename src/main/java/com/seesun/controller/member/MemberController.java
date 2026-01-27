@@ -32,7 +32,7 @@ public class MemberController {
 	// 회원가입 (멘티)
 	@PostMapping("/join")
 	public ResponseEntity<?> signUpMember(@RequestBody MemberJoinDTO data) {
-	    memberService.insertMember(data, null);
+	    memberService.insertMember(data);
 	    return ResponseEntity.ok("회원가입 성공");
 	}
 	
@@ -41,8 +41,9 @@ public class MemberController {
 	@PostMapping(value = "/join-mentor", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<?> signUp(
 			@RequestPart("data")  MemberJoinDTO data, 
-			@RequestPart(value = "file", required = false) MultipartFile file) {
-		memberService.insertMember(data, file);
+			@RequestPart("intro")  String intro, 
+			@RequestPart(value = "file", required = true) MultipartFile file) {
+		memberService.insertMentor(data, intro, file);
 		
 		return ResponseEntity.ok("회원가입 성공");
 	}

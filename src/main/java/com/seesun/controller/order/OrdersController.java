@@ -6,9 +6,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.seesun.service.order.OrdersService;
 
-// [나중에 보안 적용 시 주석 해제 필요]
-// import org.springframework.security.core.annotation.AuthenticationPrincipal;
-// import com.seesun.security.userdetail.CustomUserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.seesun.security.userdetail.CustomUserDetails;
 
 import java.util.List;
 import java.util.Map;
@@ -21,9 +20,6 @@ public class OrdersController {
     // Mapper 대신 Service를 부릅니다!
     private final OrdersService ordersService;
 
-    /* // ==========================================
-    // [보안 버전] 나중에 토큰 적용할 때 이 코드로 교체하세요!
-    // ==========================================
     @PostMapping("/request")
     public ResponseEntity<Map<String, Object>> createOrder(
         @AuthenticationPrincipal CustomUserDetails user, // 토큰에서 유저 정보 꺼내기
@@ -34,19 +30,6 @@ public class OrdersController {
         Long leId = requestData.get("le_id");
 
         Map<String, Object> responseData = ordersService.createOrder(mbId, leId);
-        return ResponseEntity.ok(responseData);
-    }
-    */
-
-    // 결제 요청 주문 생성
-    @PostMapping("/request")
-    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody Map<String, Long> requestData) {
-        Long mbId = requestData.get("mb_id");
-        Long leId = requestData.get("le_id");
-
-        // "서비스야, 주문 좀 만들어와!"
-        Map<String, Object> responseData = ordersService.createOrder(mbId, leId);
-
         return ResponseEntity.ok(responseData);
     }
 
@@ -68,8 +51,7 @@ public class OrdersController {
         }
     }
 
-    // OrdersController.java
-
+    // 결제 기록 호출
     @GetMapping("/history/{mbId}")
     public ResponseEntity<List<Map<String, Object>>> getPaymentHistory(@PathVariable Long mbId) {
         // 서비스 또는 매퍼 호출

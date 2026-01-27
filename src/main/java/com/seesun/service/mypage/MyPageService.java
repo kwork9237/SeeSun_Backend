@@ -39,6 +39,4 @@ public class MyPageService {
 		credentialService.checkPassword(mbId, data.getOldPassword());
 		memberMapper.updatePasswordByMbId(mbId, pwEncoder.encode(data.getNewPassword()));
 	}
-	
-	
 }

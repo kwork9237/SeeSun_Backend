@@ -16,17 +16,13 @@ public class LectureMainController {
 
     private final LectureMainService lectureMainService;
 
-    /**
-     * 메인 페이지: 언어별 개설된 강의 수 조회
-     */
+    // 언어별 개설된 강의 수 조회
     @GetMapping("/count")
     public ResponseEntity<Map<Long, Long>> getLectureCounts() {
         return ResponseEntity.ok(lectureMainService.getLectureCounts());
     }
 
-    /**
-     * 메인 페이지: 언어별 인기 강의 TOP 3 조회
-     */
+    // 언어별 인기 강의 TOP 3 조회
     @GetMapping("/popular")
     public ResponseEntity<List<MainLectureResponseDTO>> getPopularLectures(
             @RequestParam(value = "lgType") Long lgType) {

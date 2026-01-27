@@ -14,6 +14,7 @@ import lombok.Setter;
 @Alias("fileData")
 public class FileDataDTO {
 	// 파일 정보 저장
+	private Long file_id;			// 파일 id
 	private Long mb_id;				// 회원 ID
 	private String original_name;	// 원본 파일명
 	private String stored_name;		// UUID 파일명

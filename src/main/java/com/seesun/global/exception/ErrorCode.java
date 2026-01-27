@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
 	// 관련 오류 목록
+	// 가장 마지막 항목은 세미콜론 필수
 	
 	UNKNOWN(500, "U000", "알 수 없는 오류"),
 	INVALID_REQUEST(401, "U001", "잘못된 입력"),
@@ -29,7 +30,7 @@ public enum ErrorCode {
 	IDPW_NOT_MATCH(401, "M001", "아이디 또는 비밀번호 오류"),
 	PASSWORD_NOT_MATCH(401, "M002", "비밀번호가 일치하지 않습니다."),
 	INCORRECT_MEMBER_DATA(401, "M003", "회원정보를 찾을 수 없습니다."),
-	DUPLICATE_MEMBER_DATA(409, "M004", "중복되는 정보가 있습니다."),		// 마지막에 세미콜론 필요
+	DUPLICATE_MEMBER_DATA(409, "M004", "중복되는 정보가 있습니다."),
 
 	// WebRTC + Janus 관련 오류 (작성자:홍진기 - Janus 기반 리팩토링)
 	WEBRTC_INVALID_SESSION(400, "W001", "유효하지 않은 세션 ID입니다."),

@@ -28,7 +28,7 @@ public class FileService {
 	
 	// 저장
 	@Transactional
-	public void save(Long mbId, String code, MultipartFile file) {
+	public Long save(Long mbId, String code, MultipartFile file) {
 		// 파일 타입 검증
 		FileTypeDTO ft = validate(code);
 		
@@ -43,6 +43,8 @@ public class FileService {
 					.build();
 
 			fileMapper.insertFileData(fd);
+			
+			return fd.getFile_id();
 		} catch(Exception e) {
 			// DB 입력 실패시 파일데이터 제거 및 오류 내용 출력
 			fileManager.delete(fs.relativePath());

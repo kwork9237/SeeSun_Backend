@@ -26,15 +26,15 @@
     </select>
 	
 	<!-- 멘토 미승인 목록 -->
-	<select id="selectPendingRequests" resultType="com.seesun.dto.admin.MentoRequestDTO">
+	<select id="selectPendingRequests" resultType="mentoRequestList">
         SELECT 
             req_id as reqId,
             mb_id as mbId,
             details,
-            attachment,
+            file_id,
             req_state as reqState
         FROM request_mento
-      <!--   WHERE req_state = 0 -->
+        WHERE req_state = 0
         ORDER BY req_id DESC
     </select>
 

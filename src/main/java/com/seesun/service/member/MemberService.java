@@ -35,9 +35,9 @@ public class MemberService {
 	private final MemberMapper memberMapper;
 	private final FileService fileService;
 	
-	// 회원가입
+	// 회원가입 (멘티)
 	@Transactional
-	public void insertMember(MemberJoinDTO data, MultipartFile file) {
+	public void insertMember(MemberJoinDTO data) {
 		// 회원 데이터 저장
 		try {
 			// 비밀번호 암호화
@@ -48,12 +48,15 @@ public class MemberService {
 		} catch(DuplicateKeyException e) {
 			throw new GlobalException(ErrorCode.UNKNOWN);
 		}
+	}
+	
+	// 히원가입 (멘토)
+	// 굳이 분리한 이유는 서로 로직이 중복되거나 다르기 때문.
+	@Transactional
+	public void insertMentor(MemberJoinDTO data, String intro, MultipartFile file) {
+		insertMember(data);
 		
-		// 멘토일 경우, 파일 저장
-		if(file != null && !file.isEmpty()) {
-			// 회원 mento_request에 등록
-			fileService.save(data.getMbId(), "MENTO_REQUEST", file);
-		}
+		mentorRequest(data.getMbId(), intro, file);
 	}
 	
 	// 회원탈퇴
@@ -98,6 +101,22 @@ public class MemberService {
 		} catch (AuthenticationException e) {
 			throw new GlobalException(ErrorCode.IDPW_NOT_MATCH);
 		}
+	}
+	
+	// 멘토 승인 요청
+	public void mentorRequest(Long mbId, String intro, MultipartFile file) {
+
+		// 파일 유효성 검증
+		if(file == null || file.isEmpty()) {
+			throw new GlobalException(ErrorCode.FILE_EMPTY);
+		}
+		
+		// 파일 데이터 저장
+		Long fid = fileService.save(mbId, "MENTO_REQUEST", file);
+		
+		// 멘토 요청에 등록
+		memberMapper.insertMentoRequest();
+		
 	}
 
 	// 2026 01 27 수정필요

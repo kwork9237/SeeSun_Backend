@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.seesun.dto.admin.MentoRequestDTO;
+import com.seesun.dto.admin.MentoRequestListDTO;
 
 
 @Mapper
@@ -20,7 +20,7 @@ public interface AdminMapper {
 
 	// 관리자 멘토 승인
 	// 멘토 미승인 목록
-	List<MentoRequestDTO> selectPendingRequests(); 
+	List<MentoRequestListDTO> selectPendingRequests(); 
 
 	// 멘토 승인 처리
 	int updateRequestStatus(int reqId); 

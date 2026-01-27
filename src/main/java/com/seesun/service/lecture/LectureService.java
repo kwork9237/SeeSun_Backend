@@ -54,6 +54,7 @@ public class LectureService {
         return lecture;
     }
     
+    // 강의 생성
     @Transactional
     public Long createLecture(LectureCreateDTO createDTO) {
         Integer lgTypeId = convertLanguageToId(createDTO.getLanguage());
