@@ -8,6 +8,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Alias("mentoRequest")
-public class MentoRequest {
-
+public class MentoRequestDTO {
+	private Long mb_id;
+	private String details;
+	private Long file_id;
 }

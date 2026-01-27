@@ -54,7 +54,7 @@
 	<!--건의 사항-->
 	
 	<!-- 공지사항 목록 -->
-	   <select id="selectNotificationList" resultType="com.seesun.dto.notification.NotificationDTO">
+   <select id="selectNotificationList" resultType="notification">
 		SELECT 
 			nt_id AS ntId,
 			mb_id AS mbId,
@@ -68,7 +68,7 @@
 	</select>
 
 	<!-- 공지 사항 작성 -->
-	<insert id="insertNotification" parameterType="com.seesun.dto.notification.NotificationDTO">
+	<insert id="insertNotification" parameterType="notification">
         INSERT INTO notification (
             mb_id, 
             title, 
@@ -87,7 +87,7 @@
     </insert>
     
     <!-- 공지사항 상세 조회 -->
-    <select id="selectNotificationDetail" resultType="com.seesun.dto.notification.NotificationDTO">
+    <select id="selectNotificationDetail" resultType="notification">
 		SELECT 
 			nt_id AS ntId,
 			mb_id AS mbId,

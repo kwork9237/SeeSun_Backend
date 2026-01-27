@@ -3,6 +3,8 @@ package com.seesun.service.order;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seesun.dto.order.OrdersDTO;
+import com.seesun.global.exception.ErrorCode;
+import com.seesun.global.exception.GlobalException;
 import com.seesun.mapper.order.OrdersMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -33,8 +35,8 @@ public class OrdersService {
         Map<String, Object> lectureInfo = ordersMapper.findLectureById(leId);
         Map<String, Object> memberInfo = ordersMapper.findMemberById(mbId);
 
-        if (lectureInfo == null) throw new RuntimeException("강의 정보가 존재하지 않습니다.");
-        if (memberInfo == null) throw new RuntimeException("유저 정보가 존재하지 않습니다.");
+        if (lectureInfo == null) throw new GlobalException(ErrorCode.LECTURE_NOT_FOUND);
+        if (memberInfo == null) throw new GlobalException(ErrorCode.INCORRECT_MEMBER_DATA);
 
         String realTitle = (String) lectureInfo.get("title");
         Long realCost = Long.valueOf(String.valueOf(lectureInfo.get("cost")));
@@ -108,7 +110,7 @@ public class OrdersService {
             System.out.println("✅ Service: 결제 승인 및 DB 업데이트 완료 -> " + orderId);
         } else {
             System.err.println("❌ Service: 승인 실패 응답 -> " + response.body());
-            throw new RuntimeException("토스 결제 승인 실패: " + response.body());
+            throw new GlobalException(ErrorCode.PAYMENT_FAIL);
         }
     }
 

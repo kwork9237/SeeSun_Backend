@@ -3,7 +3,10 @@ package com.seesun.dto.notification;
 import lombok.Data;
 import java.time.LocalDateTime;
 
+import org.apache.ibatis.type.Alias;
+
 @Data
+@Alias("notification")
 public class NotificationDTO {
 	private Long ntId;          // nt_id (No, 번호)
     private String mbId;        // mb_id (Writer, 작성자 ID)

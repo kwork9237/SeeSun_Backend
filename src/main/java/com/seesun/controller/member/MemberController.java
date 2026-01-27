@@ -36,7 +36,6 @@ public class MemberController {
 	    return ResponseEntity.ok("회원가입 성공");
 	}
 	
-	
 	// 회원가입 (멘토)
 	@PostMapping(value = "/join-mentor", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<?> signUp(

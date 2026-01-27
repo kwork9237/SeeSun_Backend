@@ -2,8 +2,11 @@ package com.seesun.controller.mypage;
 
 import com.seesun.dto.lecture.LectureDTO;
 import com.seesun.mapper.lecture.MenteeHomeMapper;
+import com.seesun.security.userdetail.CustomUserDetails;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -17,24 +20,6 @@ public class MenteeHomeController {
 
     private final MenteeHomeMapper menteeHomeMapper;
 
-    @GetMapping("/home/{mbId}")
-    public ResponseEntity<?> getHomeData(@PathVariable Long mbId) {
-        Map<String, Object> response = new HashMap<>();
-
-        // 1. 스케줄 (내가 신청한 강의의 시간표)
-        List<LectureDTO> schedules = menteeHomeMapper.selectMenteeSchedules(mbId);
-        response.put("schedules", schedules);
-
-        // 2. 강의 목록 (내가 수강신청한 강의들)
-        List<LectureDTO> myLectures = menteeHomeMapper.selectMenteeLectures(mbId);
-        response.put("myLectures", myLectures);
-
-        return ResponseEntity.ok(response);
-    }
-
-    // ==========================================
-    // 추후 토큰 이용시 사용
-    /*
     @GetMapping("/home")
     public ResponseEntity<?> getHomeDataWithToken(@AuthenticationPrincipal CustomUserDetails user) {
 
@@ -53,7 +38,5 @@ public class MenteeHomeController {
 
         return ResponseEntity.ok(response);
     }
-    */
-
 
 }

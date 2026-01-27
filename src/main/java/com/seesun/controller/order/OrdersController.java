@@ -54,8 +54,8 @@ public class OrdersController {
     // 결제 기록 호출
     @GetMapping("/history/{mbId}")
     public ResponseEntity<List<Map<String, Object>>> getPaymentHistory(@PathVariable Long mbId) {
-        // 서비스 또는 매퍼 호출
-        List<Map<String, Object>> historyList = ordersService.getPaymentHistory(mbId);
-        return ResponseEntity.ok(historyList);
+        return ResponseEntity.ok(
+        		ordersService.getPaymentHistory(mbId)
+			);
     }
 }

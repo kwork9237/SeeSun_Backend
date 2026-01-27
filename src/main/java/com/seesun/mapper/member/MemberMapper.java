@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.seesun.dto.auth.AuthenticationDTO;
 import com.seesun.dto.member.request.MemberJoinDTO;
+import com.seesun.dto.member.request.MentoRequestDTO;
 import com.seesun.dto.mypage.MyPageDTO;
 
 @Mapper
@@ -35,7 +36,7 @@ public interface MemberMapper {
 	public int checkAdmin(@Param("mb_id") Long mbId);
 	
 	// 멘토 요청 추가
-	public void insertMentoRequest();
+	public void insertMentoRequest(MentoRequestDTO data);
 
 	// 2026 01 27 수정필요
 	// 내 정보 조회 (마이페이지용)

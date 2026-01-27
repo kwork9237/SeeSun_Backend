@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.seesun.dto.member.request.LoginRequestDTO;
 import com.seesun.dto.member.request.MemberJoinDTO;
+import com.seesun.dto.member.request.MentoRequestDTO;
 import com.seesun.dto.member.response.LoginResponseDTO;
 import com.seesun.global.exception.ErrorCode;
 import com.seesun.global.exception.GlobalException;
@@ -46,13 +47,12 @@ public class MemberService {
 			// 회원 데이터 저장
 			memberMapper.insertMember(data);
 		} catch(DuplicateKeyException e) {
-			throw new GlobalException(ErrorCode.UNKNOWN);
+			throw new GlobalException(ErrorCode.DATABASE_INSERT_ERROR);
 		}
 	}
 	
 	// 히원가입 (멘토)
 	// 굳이 분리한 이유는 서로 로직이 중복되거나 다르기 때문.
-	@Transactional
 	public void insertMentor(MemberJoinDTO data, String intro, MultipartFile file) {
 		insertMember(data);
 		
@@ -114,8 +114,13 @@ public class MemberService {
 		// 파일 데이터 저장
 		Long fid = fileService.save(mbId, "MENTO_REQUEST", file);
 		
+		MentoRequestDTO r = new MentoRequestDTO();
+		r.setMb_id(mbId);
+		r.setDetails(intro);
+		r.setFile_id(fid);
+		
 		// 멘토 요청에 등록
-		memberMapper.insertMentoRequest();
+		memberMapper.insertMentoRequest(r);
 		
 	}
 

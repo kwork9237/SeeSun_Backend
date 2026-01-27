@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.seesun.mapper.lecture.LectureMapper;
+import com.seesun.mapper.lecture.language.LanguageCategoryMapper;
 import com.seesun.dto.lecture.*;
 import lombok.RequiredArgsConstructor;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LectureService {
     private final LectureMapper lectureMapper;
+    private final LanguageCategoryMapper languageCategoryMapper;
 
     // 강의 목록 조회
     public List<LectureDTO> getLectureList(
@@ -57,7 +59,8 @@ public class LectureService {
     // 강의 생성
     @Transactional
     public Long createLecture(LectureCreateDTO createDTO) {
-        Integer lgTypeId = convertLanguageToId(createDTO.getLanguage());
+    	short lgTypeId = languageCategoryMapper.getCategoryDataByCode(
+    			createDTO.getLanguage().toUpperCase()).getLg_type_id();
         
         Map<String, Object> lectureParams = new HashMap<>();
         lectureParams.put("mbId", createDTO.getMbId());
@@ -114,15 +117,6 @@ public class LectureService {
         }
         
         return lectureId;
-    }
-    
-    private Integer convertLanguageToId(String language) {
-        switch(language) {
-            case "en": return 1;
-            case "jp": return 2;
-            case "cn": return 3;
-            default: return 1;
-        }
     }
     
     private String convertToDate(String month, String day) {

@@ -11,6 +11,7 @@ public enum ErrorCode {
 	INVALID_REQUEST(401, "U001", "잘못된 입력"),
 	UNAUTHORIZED(401, "U002", "로그인 상태에서만 가능합니다."),
 	
+	
 	// 파일 관련 오류
 	FILE_SAVE_FAIL(500, "F001", "파일 저장 실패"),
 	FILE_DELETE_FAIL(500, "F002", "파일 삭제 실패"),
@@ -31,6 +32,12 @@ public enum ErrorCode {
 	PASSWORD_NOT_MATCH(401, "M002", "비밀번호가 일치하지 않습니다."),
 	INCORRECT_MEMBER_DATA(401, "M003", "회원정보를 찾을 수 없습니다."),
 	DUPLICATE_MEMBER_DATA(409, "M004", "중복되는 정보가 있습니다."),
+	
+	// 강의 관련 오류
+	LECTURE_NOT_FOUND(500, "L001", "강의 정보가 존재하지 않습니다."),
+	
+	// 결제 관련 오류
+	PAYMENT_FAIL(500, "P001", "결제 승인 실패"),
 
 	// WebRTC + Janus 관련 오류 (작성자:홍진기 - Janus 기반 리팩토링)
 	WEBRTC_INVALID_SESSION(400, "W001", "유효하지 않은 세션 ID입니다."),

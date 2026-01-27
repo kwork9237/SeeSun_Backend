@@ -2,13 +2,12 @@ package com.seesun.controller.mypage;
 
 import com.seesun.dto.mypage.DashboardDTO;
 import com.seesun.mapper.lecture.DashboardMapper;
+import com.seesun.security.userdetail.CustomUserDetails;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-// [보안/토큰 적용 시 주석 해제할 Import]
-// import org.springframework.security.core.annotation.AuthenticationPrincipal;
-// import com.seesun.security.userdetail.CustomUserDetails;
 
 import java.util.Map;
 
@@ -19,24 +18,12 @@ import java.util.Map;
 public class DashboardController {
     private final DashboardMapper dashboardMapper;
 
-    /* ============================================================
-    // [1] 미래 버전: 토큰 기반 (보안 적용 시 주석 해제 후 사용)
-    // ============================================================
     @GetMapping("/home")
     public ResponseEntity<DashboardDTO> getDashboardHome(@AuthenticationPrincipal CustomUserDetails user) {
 
         // 토큰에서 내 ID 꺼내기
         Long mbId = user.getMbId();
         return getDashboardData(mbId); // 아래 공통 로직 호출
-    }
-    */
-
-    // ============================================================
-    // [2] 현재 버전: 개발용 (ID 직접 입력)
-    // ============================================================
-    @GetMapping("/home/{mbId}")
-    public ResponseEntity<DashboardDTO> getDashboardHome(@PathVariable Long mbId) {
-        return getDashboardData(mbId); // 공통 로직 호출
     }
 
     // ============================================================
