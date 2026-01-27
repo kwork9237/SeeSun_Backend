@@ -105,12 +105,12 @@ public class SecurityConfig {
                 // 그 외 모든 요청은 인증 필요
                 .anyRequest().authenticated()
             )
-            
-            // 5. JWT 필터 등록
-            .addFilterBefore(
-            		new JwtAuthenticationFilter(jwtTokenProvider, userDetailService), 
-            		UsernamePasswordAuthenticationFilter.class
-        		);
+
+        	// 5. JWT 필터 등록
+        	.addFilterBefore(
+        		new JwtAuthenticationFilter(jwtTokenProvider, userDetailService), 
+        		UsernamePasswordAuthenticationFilter.class
+    		);
 
         return http.build();
     }

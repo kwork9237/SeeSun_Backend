@@ -13,34 +13,23 @@ import java.util.List;
 @Builder
 public class LectureDTO {
 
-    private List<SectionDTO> sections; // 상세 조회 시 커리큘럼 목록을 포함
+    // 1. 외부 파일로 분리한 DTO를 리스트로 참조
+    private List<SectionDTO> sections; 
 
-    @Data
-    public static class SectionDTO {
-        private Long sectionId;
-        private String title;
-        private List<LessonDTO> lessons;
-    }
+    // --- 기존 내부 클래스(SectionDTO, LessonDTO) 삭제됨 ---
 
-    @Data
-    public static class LessonDTO {
-        private Long lessonId;
-        private String title;
-        private Integer duration;
-    }
-    
     private Long leId;
     private String title;
     private String content;
     private String categoryName;
 
-    // 멘토 정보
+    // 멘토 정보 (상세 페이지 노출용)
     private Long mbId;
     private String instructorName;
     private String profileIcon;
     private Boolean isNativeSpeaker;
 
-    // 강의 통계 및 가격
+    // 강의 통계 및 가격 (조회 시에만 필요한 필드들)
     private Integer cost;
     private Double avgScore;
     private Integer difficulty;
@@ -50,15 +39,14 @@ public class LectureDTO {
 
     // 시간 및 태그 정보
     private List<String> tags;
-    private Double totalHours;       // 계산된 시간 단위 (예: 1.5, 2.0)
-    private String availableTime;     // 포맷팅된 시간 (예: "12:00 ~ 15:00")
+    private Double totalHours;       
+    private String availableTime;     
     private String timeSlot;
 
-    // ✅ 추가: 날짜 및 스케줄 정보
-    private String startDate;         // 강의 시작일 "2026-01-01"
-    private String endDate;           // 강의 종료일 "2026-12-31"
-    private String availableDays;     // 수업 가능한 요일 "0,1,2" (일,월,화)
-    // availableTime은 이미 있으므로 용도 변경: "09:00,14:00,19:00" 형태로 사용
+    // 날짜 및 스케줄 정보
+    private String startDate;         
+    private String endDate;           
+    private String availableDays;     
 
     private Boolean isActive;
 
