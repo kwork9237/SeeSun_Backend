@@ -22,4 +22,7 @@ public interface AdminMapper {
     List<NotificationDTO> selectNotificationList();
 
     NotificationDTO selectNotificationDetail(Long ntId);
+	void insertNotification(NotificationDTO dto);
+	
+
 }

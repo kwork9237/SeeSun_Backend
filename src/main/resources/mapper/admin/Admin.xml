@@ -63,18 +63,24 @@
 		ORDER BY nt_id DESC
 	</select>
 
-    <!-- <select id="selectNotificationDetail" resultType="com.seesun.dto.notification.NotificationDTO">
-		SELECT 
-			nt_id AS ntId,
-			mb_id AS mbId,
-			title,
-			content,
-			view_count AS viewCount,
-			created_at AS createdAt,
-			modified_at AS modifiedAt
-		FROM notification
-		WHERE nt_id = #{ntId}
-	</select> -->
+	<!-- 공지 사항 작성 -->
+	<insert id="insertNotification" parameterType="com.seesun.dto.notification.NotificationDTO">
+        INSERT INTO notification (
+            mb_id, 
+            title, 
+            content, 
+            view_count, 
+            created_at, 
+            modified_at
+        ) VALUES (
+            #{mbId}, 
+            #{title}, 
+            #{content}, 
+            0, 
+            NOW(), 
+            NOW()
+        )
+    </insert>
     
 </mapper>	
 	

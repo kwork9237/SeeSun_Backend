@@ -71,14 +71,11 @@ public class AdminController {
 	        return ResponseEntity.ok(list);
 	    }
 	    
-	    // 2. 공지사항 상세 조회
-//	    @GetMapping("/notices/{ntId}")
-//	    public ResponseEntity<NotificationDTO> getNotificationDetail(@PathVariable Long ntId) {
-//	        System.out.println("공지사항 상세 조회 요청: " + ntId);
-//	        // [중요] AdminService(클래스)가 아니라 adminService(변수)를 사용해야 합니다.
-//	        NotificationDTO notice = adminService.getNotificationDetail(ntId);
-//	        return ResponseEntity.ok(notice);
-//	        System.out.println();
-//	    }
+	    @PostMapping("/notices")
+	    public ResponseEntity<String> createNotification(@RequestBody NotificationDTO dto) {
+	        System.out.println("공지사항 작성 요청: " + dto);
+	        adminService.createNotification(dto); // 서비스 호출
+	        return ResponseEntity.ok("SUCCESS");
+	    }
 
 }
