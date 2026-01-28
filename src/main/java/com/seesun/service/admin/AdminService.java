@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.seesun.dto.admin.AdminDTO;
 import com.seesun.dto.admin.MentoRequestListDTO;
 import com.seesun.dto.notification.NotificationDTO;
+// [필수] SuggestionDTO import 확인
+import com.seesun.dto.suggestion.SuggestionDTO; 
 
 import com.seesun.mapper.admin.AdminMapper;
 import com.seesun.service.auth.MemberCredentialService;
@@ -44,7 +46,12 @@ public class AdminService {
 
     // 강의 신고
     
-    // 건의사항
+    // ---------------------------------------------------------
+    // [추가됨] 건의사항 목록 조회
+    // ---------------------------------------------------------
+    public List<SuggestionDTO> getSuggestions() {
+        return adminMapper.selectSuggestionList();
+    }
     
     // 1. 공지사항 전체 목록 조회
     public List<NotificationDTO> getAllNotifications() {
@@ -56,22 +63,22 @@ public class AdminService {
         adminMapper.insertNotification(dto);
     }
 
-    // 3. [수정됨] 공지사항 상세 조회 + 조회수 증가
+    // 3. 공지사항 상세 조회 + 조회수 증가
     public NotificationDTO getNotificationDetail(Long ntId) {
-        
         // 1. 조회수 증가 (DB 업데이트)
         adminMapper.increaseViewCount(ntId);
-        
         // 2. 상세 정보 가져오기 (조회 후 반환)
         return adminMapper.selectNotificationDetail(ntId);
-    } // <--- 여기가 빠져있었습니다! (메서드 종료)
+    } 
 
-    // 3.  공지사항 수정 기능
+    // 4. 공지사항 수정 기능
     public void updateNotification(NotificationDTO dto) {
         adminMapper.updateNotification(dto);
     }
- //  4. 공지사항 삭제 기능
+    
+    // 5. 공지사항 삭제 기능
     public void deleteNotification(Long ntId) {
         adminMapper.deleteNotification(ntId);
     }
-} 
+    
+}

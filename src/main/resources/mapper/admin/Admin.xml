@@ -4,12 +4,10 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.seesun.mapper.admin.AdminMapper">
-	<!-- 멘토 신청 -->
 	<select id="countNewMentorRequests" resultType="int">
         SELECT COUNT(*) 
         FROM request_mento where req_state = 0
     </select>
-    
     <select id="countReportedLectures" resultType="int">
         SELECT COUNT(*) 
         FROM lecture
@@ -41,7 +39,19 @@
         WHERE rm.req_id = #{reqId}
     </update>
     
-	
+    <select id="selectSuggestionList" resultType="com.seesun.dto.suggestion.SuggestionDTO">
+        SELECT 
+            sg_id AS sgId,
+            mb_id AS mbId,
+            title,
+            content,
+            view_count AS viewCount,
+            created_at AS createdAt,
+            modified_at AS modifiedAt
+        FROM suggestions
+        ORDER BY sg_id DESC
+    </select>
+    
 	<select id="selectNotificationList" resultType="com.seesun.dto.notification.NotificationDTO">
 		SELECT 
 			nt_id AS ntId,
@@ -72,7 +82,7 @@
             NOW()
         )
     </insert>
-    <!-- 공지 상세 보기 -->
+    
     <select id="selectNotificationDetail" resultType="com.seesun.dto.notification.NotificationDTO">
 		SELECT 
 			nt_id AS ntId,
@@ -84,15 +94,14 @@
 			modified_at AS modifiedAt
 		FROM notification
 		WHERE nt_id = #{ntId}
-	<!-- 조회수 증가 -->	
 	</select>
+	
 	<update id="increaseViewCount" parameterType="Long">
 		UPDATE notification
 		SET view_count = view_count + 1
-		
 		WHERE nt_id = #{ntId}
 	</update>
-	<!-- 수정 -->
+	
 	<update id="updateNotification" parameterType="com.seesun.dto.notification.NotificationDTO">
         UPDATE notification
         SET 
@@ -101,7 +110,7 @@
             modified_at = NOW()
         WHERE nt_id = #{ntId}
     </update>
-    <!-- 삭제 -->
+    
     <delete id="deleteNotification" parameterType="long">
         DELETE FROM notification 
         WHERE nt_id = #{ntId}
