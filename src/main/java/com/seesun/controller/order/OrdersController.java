@@ -52,10 +52,18 @@ public class OrdersController {
     }
 
     // 결제 기록 호출
-    @GetMapping("/history/{mbId}")
-    public ResponseEntity<List<Map<String, Object>>> getPaymentHistory(@PathVariable Long mbId) {
-        return ResponseEntity.ok(
-        		ordersService.getPaymentHistory(mbId)
-			);
+    @GetMapping("/history") // ★ ID 경로 제거
+    public ResponseEntity<List<Map<String, Object>>> getPaymentHistory(
+            @AuthenticationPrincipal CustomUserDetails user // ★ 토큰에서 유저 정보 주입
+    ) {
+        // 토큰이 없거나 잘못된 경우 시큐리티가 차단하지만, 코드 안전성을 위해 null 체크
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        // 토큰 정보 추출
+        Long mbId = user.getMbId();
+
+        // 정보 가져오기
+        return ResponseEntity.ok(ordersService.getPaymentHistory(mbId));
     }
 }

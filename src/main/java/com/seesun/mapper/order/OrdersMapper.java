@@ -26,5 +26,6 @@ public interface OrdersMapper {
     // 수강 신청 테이블(member_enrollment)에 데이터 넣기
     void insertEnrollment(@Param("mb_id") Long mbId, @Param("le_id") Long leId);
 
+    // 결제 정보 가져오기
     List<Map<String, Object>> getPaymentHistory(Long mbId);
 }

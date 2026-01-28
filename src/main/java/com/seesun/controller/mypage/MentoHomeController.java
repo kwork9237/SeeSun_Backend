@@ -47,15 +47,6 @@ public class MentoHomeController {
 		return getResponse(mbId);
 	}
 
-    // 2. [개발/테스트용] URL 파라미터 기반 조회 (Param Based)
-    // 설명: 프론트엔드에서 아직 토큰 작업이 안 되었을 때 사용
-    // ==================================================================
-//    @GetMapping("/home/{mbId}")
-//    public ResponseEntity<?> getHomeDataWithParam(@PathVariable Long mbId) {
-//        // 공통 로직 호출
-//        return getResponse(mbId);
-//    }
-
     private ResponseEntity<?> getResponse(Long mbId) {
         Map<String, Object> response = new HashMap<>();
 

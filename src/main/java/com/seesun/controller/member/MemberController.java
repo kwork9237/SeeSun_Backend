@@ -17,6 +17,7 @@ import com.seesun.dto.member.request.EmailVerifyRequestDTO;
 import com.seesun.dto.member.request.LeaveRequestDTO;
 import com.seesun.dto.member.request.LoginRequestDTO;
 import com.seesun.dto.member.request.MemberJoinDTO;
+import com.seesun.dto.member.request.MemberSearchDTO;
 import com.seesun.dto.member.response.LoginResponseDTO;
 import com.seesun.security.userdetail.CustomUserDetails;
 import com.seesun.service.member.MemberService;
@@ -83,19 +84,13 @@ public class MemberController {
 	}
 	
 
-	//회원 정보 조회
-//	@GetMapping("/profile/{mbId}")
-//	public ResponseEntity<MyPageDTO> getProfile(@PathVariable Long mbId) {
-//		MyPageDTO myPage = memberService.getMyPageInfo(mbId);
-//		return ResponseEntity.ok(myPage);
-//	}
-
-	/* [미래용: 토큰 버전] ------------------------------------------------
+	// 회원 정보 검색
     @GetMapping("/profile")
-    public ResponseEntity<MyPageDTO> getProfile(@AuthenticationPrincipal CustomUserDetails user) {
+    public ResponseEntity<MemberSearchDTO> getProfile(@AuthenticationPrincipal CustomUserDetails user) {
         Long mbId = user.getMbId();
-        MyPageDTO myPage = myPageService.getMyPageInfo(mbId);
-        return ResponseEntity.ok(myPage);
+        MemberSearchDTO memberSearch = memberService.getMyPageInfo(mbId);
+
+        return ResponseEntity.ok(memberSearch);
     }
-    -------------------------------------------------------------------- */
+
 }

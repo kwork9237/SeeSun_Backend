@@ -118,7 +118,6 @@ public class OrdersService {
 
     // [결제 내역 조회]
     public List<Map<String, Object>> getPaymentHistory(Long mbId) {
-        // Mapper한테 "DB에서 긁어와!" 시키기
         return ordersMapper.getPaymentHistory(mbId);
     }
 }
