@@ -25,6 +25,10 @@ public interface AdminMapper {
     // [추가됨] XML의 id="selectSuggestionList"와 이름이 같아야 합니다.
 	List<SuggestionDTO> selectSuggestionList();
 	
+	//건의사항 상세보기
+	void increaseSuggestionViewCount(Long sgId);
+	SuggestionDTO selectSuggestionDetail(Long sgId);
+	
 	// 공지 사항
     List<NotificationDTO> selectNotificationList();
 

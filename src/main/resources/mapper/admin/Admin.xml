@@ -3,17 +3,20 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
+
 <mapper namespace="com.seesun.mapper.admin.AdminMapper">
+	
 	<select id="countNewMentorRequests" resultType="int">
         SELECT COUNT(*) 
         FROM request_mento where req_state = 0
     </select>
+    
     <select id="countReportedLectures" resultType="int">
         SELECT COUNT(*) 
         FROM lecture
         WHERE is_active = 1
     </select>
-    
+  	
     <select id="countUnansweredInquiries" resultType="int">
         SELECT COUNT(*) 
         FROM suggestion
@@ -52,6 +55,26 @@
         ORDER BY sg_id DESC
     </select>
     
+	<select id="selectSuggestionDetail" resultType="com.seesun.dto.suggestion.SuggestionDTO">
+        SELECT 
+            sg_id AS sgId,
+            mb_id AS mbId,
+            title,
+            content,
+            view_count AS viewCount,
+            created_at AS createdAt,
+            modified_at AS modifiedAt
+        FROM suggestions
+        WHERE sg_id = #{sgId}
+    </select>
+
+    <update id="increaseSuggestionViewCount" parameterType="long">
+        UPDATE suggestions
+        SET view_count = view_count + 1
+        WHERE sg_id = #{sgId}
+    </update>   
+    
+    
 	<select id="selectNotificationList" resultType="com.seesun.dto.notification.NotificationDTO">
 		SELECT 
 			nt_id AS ntId,
@@ -64,6 +87,7 @@
 		FROM notification
 		ORDER BY nt_id DESC
 	</select>
+	
 
 	<insert id="insertNotification" parameterType="com.seesun.dto.notification.NotificationDTO">
         INSERT INTO notification (

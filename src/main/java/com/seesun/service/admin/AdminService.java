@@ -52,6 +52,13 @@ public class AdminService {
     public List<SuggestionDTO> getSuggestions() {
         return adminMapper.selectSuggestionList();
     }
+    public SuggestionDTO getSuggestionDetail(Long sgId) {
+        // 1. 조회수 증가
+        adminMapper.increaseSuggestionViewCount(sgId);
+        
+        // 2. 상세 데이터 조회 후 반환
+        return adminMapper.selectSuggestionDetail(sgId);
+    }
     
     // 1. 공지사항 전체 목록 조회
     public List<NotificationDTO> getAllNotifications() {

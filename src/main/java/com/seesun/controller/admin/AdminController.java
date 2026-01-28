@@ -70,6 +70,13 @@ public class AdminController {
         List<SuggestionDTO> list = adminService.getSuggestions();
         return ResponseEntity.ok(list);
     }
+    //건의사항 상세 보기
+    @GetMapping("/suggestions/{sgId}")
+    public ResponseEntity<SuggestionDTO> getSuggestionDetail(@PathVariable("sgId") Long sgId) {
+        System.out.println("건의 사항 상세 조회 요청: " + sgId);
+        SuggestionDTO detail = adminService.getSuggestionDetail(sgId);
+        return ResponseEntity.ok(detail);
+    }
     
     // 공지사항 목록
     @GetMapping("/notices")
