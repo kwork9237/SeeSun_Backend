@@ -27,4 +27,7 @@ public interface AdminMapper {
 	void insertNotification(NotificationDTO dto);
 			
 	void increaseViewCount(Long ntId);
+	void updateNotification(NotificationDTO dto);
+	void deleteNotification(Long ntId);
+	
 }

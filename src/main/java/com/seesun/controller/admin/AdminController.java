@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -86,6 +88,25 @@ public class AdminController {
         System.out.println("공지사항 상세 조회 요청: " + ntId);
         NotificationDTO notice = adminService.getNotificationDetail(ntId);
         return ResponseEntity.ok(notice);
+    }
+    
+    //공지사항 수정
+    @PutMapping("/notices/{ntId}")
+    public ResponseEntity<String> updateNotification(@PathVariable("ntId") Long ntId, @RequestBody NotificationDTO dto) {
+        System.out.println("공지사항 수정 요청: " + ntId);
+        
+        // URL에 있는 ID를 DTO에 확실하게 주입 (안전장치)
+        dto.setNtId(ntId);
+        
+        adminService.updateNotification(dto);
+        return ResponseEntity.ok("SUCCESS");
+    }
+    //6. 공지사항 삭제
+    @DeleteMapping("/notices/{ntId}")
+    public ResponseEntity<String> deleteNotification(@PathVariable("ntId") Long ntId) {
+        System.out.println("공지사항 삭제 요청: " + ntId);
+        adminService.deleteNotification(ntId);
+        return ResponseEntity.ok("SUCCESS");
     }
 
 }
