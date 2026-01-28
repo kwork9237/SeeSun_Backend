@@ -51,7 +51,7 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(List.of(
     	    "http://localhost:3000",          // 로컬 개발용
-    	    ""								  // 실제 서비스 도메인은 추후 적용 필요. (26 01 15)
+    	    "https://du-project.kro.kr"		  // 실제 서비스 도메인은 추후 적용 필요. (26 01 15)
     	));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
