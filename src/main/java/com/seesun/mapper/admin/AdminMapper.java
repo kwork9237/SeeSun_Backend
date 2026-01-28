@@ -14,6 +14,7 @@ public interface AdminMapper {
 	// 관리자 메인
 	int countNewMentorRequests();
 	int countReportedLectures();
+    int countSuggestions();
 	
 	// 멘토 미승인 목록
 	List<MentoRequestListDTO> selectPendingRequests();

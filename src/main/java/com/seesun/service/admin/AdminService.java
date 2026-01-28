@@ -29,7 +29,7 @@ public class AdminService {
         AdminDTO stats = new AdminDTO();
         stats.setNewMentorCount(adminMapper.countNewMentorRequests());
         stats.setReportedLectureCount(adminMapper.countReportedLectures());
-        // stats.setInquiryCount(adminMapper.countUnansweredInquiries());
+        stats.setInquiryCount(adminMapper.countSuggestions());
         
         return stats;
     }
@@ -54,7 +54,7 @@ public class AdminService {
     }
     public SuggestionDTO getSuggestionDetail(Long sgId) {
         // 1. 조회수 증가
-        adminMapper.increaseSuggestionViewCount(sgId);
+        adminMapper.increaseSuggestionViewCount(sgId);	
         
         // 2. 상세 데이터 조회 후 반환
         return adminMapper.selectSuggestionDetail(sgId);
