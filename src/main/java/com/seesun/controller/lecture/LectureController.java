@@ -61,7 +61,7 @@ public class LectureController {
      * 3. 강의 상세 조회 API
      */
     @GetMapping("/{id}")
-    public ResponseEntity<LectureDTO> getLectureDetail(@PathVariable Long id) {
+    public ResponseEntity<LectureDTO> getLectureDetail(@PathVariable("id") Long id) {
         LectureDTO lecture = lectureService.getLectureDetail(id);
         return ResponseEntity.ok(lecture);
     }

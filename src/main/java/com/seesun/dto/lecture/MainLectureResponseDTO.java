@@ -15,4 +15,8 @@ public class MainLectureResponseDTO {
 	private double mentor_rate; // 멘토 평점 (Member 테이블)
 	private int le_price; // 가격
 	private String le_thumb; // 썸네일 URL (프로필 아이콘 등)
+	
+	// SQL에서 연산/가공되어 넘어오는 필드 (AS 별칭 필수)
+	private int total_hours; // 총 수업 시간 (DB에서 시작/종료 시간 차이 계산 또는 슬롯 수 합계)
+	private String available_time; // 강의 가능 요일/시간 요약 (UI 표시용 문자열, 예: "월,수 16:00~18:00")
 }
