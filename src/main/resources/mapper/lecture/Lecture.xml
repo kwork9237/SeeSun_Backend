@@ -17,10 +17,8 @@
         <result property="categoryName" column="category_name" />
         <result property="studentCount" column="student_count" />
         <result property="reviewCount" column="review_count" />
-        
         <result property="totalHours" column="total_hours" />
         <result property="availableTime" column="available_time" />
-        
         <result property="startDate" column="start_date" />
         <result property="endDate" column="end_date" />
         <result property="availableDays" column="available_days" />
@@ -29,48 +27,30 @@
     <select id="getLectureList" resultMap="LectureResultMap">
         SELECT 
             l.le_id, l.title, l.content, l.cost, l.difficulty, l.view_count, l.is_active,
-            
-            /* ✅ [수정] 고정된 컬럼 대신 lecture_evaluation 테이블에서 실시간 평균 계산 */
             (SELECT IFNULL(AVG(score), 0) FROM lecture_evaluation WHERE le_id = l.le_id) AS avg_score,
-
             m.mb_id, m.name AS instructor_name, m.profile_icon,
             c.name AS category_name,
             (SELECT COUNT(*) FROM member_enrollment e WHERE e.le_id = l.le_id) AS student_count,
-            
-            /* ✅ [수정] 리뷰 개수도 evaluation 테이블 기준으로 변경 (기존 view_count는 조회수임) */
             (SELECT COUNT(*) FROM lecture_evaluation WHERE le_id = l.le_id) AS review_count,
-            
-            /* 총 시간(시간 단위 변환) */
             (SELECT ROUND(IFNULL(SUM(ll.duration), 0) / 60, 1) 
              FROM lecture_section ls 
              JOIN lecture_lesson ll ON ls.section_id = ll.section_id 
              WHERE ls.le_id = l.le_id) AS total_hours,
-            
-            /* 주요 시간 포맷팅 */
             (SELECT CONCAT(DATE_FORMAT(start_time, '%H:%i'), ' ~ ', DATE_FORMAT(end_time, '%H:%i'))
              FROM lecture_schedule WHERE le_id = l.le_id LIMIT 1) AS available_time,
-            
-            /* 강의 시작일 */
             (SELECT MIN(schedule_date) FROM lecture_schedule WHERE le_id = l.le_id) AS start_date,
-            
-            /* 강의 종료일 */
             (SELECT MAX(schedule_date) FROM lecture_schedule WHERE le_id = l.le_id) AS end_date,
-            
-            /* 요일 정보 */
             (SELECT GROUP_CONCAT(DISTINCT (DAYOFWEEK(schedule_date) - 1) ORDER BY DAYOFWEEK(schedule_date) SEPARATOR ',')
              FROM lecture_schedule WHERE le_id = l.le_id) AS available_days
-             
         FROM lecture l
         LEFT JOIN member m ON l.mb_id = m.mb_id
         LEFT JOIN language_category c ON l.lg_type_Id = c.lg_type_id
         WHERE l.is_active = 1
-        
         <if test="language != null and language != '' and language != '언어'"> AND c.name = #{language} </if>
         <if test="difficulty != null"> AND l.difficulty = #{difficulty} </if>
         <if test="search != null and search != ''"> 
             AND (l.title LIKE CONCAT('%', #{search}, '%') OR l.content LIKE CONCAT('%', #{search}, '%')) 
         </if>
-        
         <choose>
             <when test="sortBy == 'rating'"> ORDER BY avg_score DESC </when>
             <when test="sortBy == 'price'"> ORDER BY l.cost ASC </when>
@@ -81,31 +61,20 @@
     <select id="getLectureDetail" resultMap="LectureResultMap">
         SELECT 
             l.le_id, l.title, l.content, l.cost, l.difficulty, l.view_count, l.is_active,
-            
-            /* ✅ [수정] 상세 페이지에서도 실시간 평점 계산 */
             (SELECT IFNULL(AVG(score), 0) FROM lecture_evaluation WHERE le_id = l.le_id) AS avg_score,
-
             m.mb_id, m.name AS instructor_name, m.profile_icon,
             c.name AS category_name,
             (SELECT COUNT(*) FROM member_enrollment e WHERE e.le_id = l.le_id) AS student_count,
-            
-            /* ✅ [수정] 리뷰 개수 수정 */
             (SELECT COUNT(*) FROM lecture_evaluation WHERE le_id = l.le_id) AS review_count,
-            
-            /* 총 시간 */
             (SELECT ROUND(IFNULL(SUM(ll.duration), 0) / 60, 1) 
              FROM lecture_section ls JOIN lecture_lesson ll ON ls.section_id = ll.section_id 
              WHERE ls.le_id = l.le_id) AS total_hours,
-            
-            /* 모든 시간대 추출 */
             (SELECT GROUP_CONCAT(DISTINCT DATE_FORMAT(start_time, '%H:%i') ORDER BY start_time SEPARATOR ',')
              FROM lecture_schedule WHERE le_id = l.le_id) AS available_time,
-            
             (SELECT MIN(schedule_date) FROM lecture_schedule WHERE le_id = l.le_id) AS start_date,
             (SELECT MAX(schedule_date) FROM lecture_schedule WHERE le_id = l.le_id) AS end_date,
             (SELECT GROUP_CONCAT(DISTINCT (DAYOFWEEK(schedule_date) - 1) ORDER BY DAYOFWEEK(schedule_date) SEPARATOR ',')
              FROM lecture_schedule WHERE le_id = l.le_id) AS available_days
-             
         FROM lecture l
         LEFT JOIN member m ON l.mb_id = m.mb_id
         LEFT JOIN language_category c ON l.lg_type_Id = c.lg_type_id
@@ -132,7 +101,7 @@
         VALUES (#{leId}, #{scheduleDate}, #{startTime}, #{endTime}, #{maxStudents}, 0, 1)
     </insert>
 
-    <select id="getSectionsByLectureId" resultType="section">
+    <select id="getSectionsByLectureId" resultType="com.seesun.dto.lecture.SectionDTO">
         SELECT 
             section_id AS sectionId,
             title,
@@ -142,7 +111,7 @@
         ORDER BY order_num ASC
     </select>
 
-    <select id="getLessonsBySectionId" resultType="lesson">
+    <select id="getLessonsBySectionId" resultType="com.seesun.dto.lecture.LessonDTO">
         SELECT 
             lesson_id AS lessonId,
             title,

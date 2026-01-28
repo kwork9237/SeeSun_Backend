@@ -4,56 +4,42 @@
 
     <insert id="insertReview">
         INSERT INTO lecture_evaluation (
-            lecture_id, 
+            le_id, 
             mb_id, 
-            rating, 
-            content, 
-            created_at
+            score, 
+            content
         ) VALUES (
-            #{lectureId}, 
+            #{leId}, 
             #{mbId}, 
-            #{rating}, 
-            #{content}, 
-            NOW()
+            #{score}, 
+            #{content}
         )
     </insert>
 
     <select id="selectReviews" resultType="com.seesun.dto.review.ReviewDTO">
         SELECT 
-            r.id,
-            r.lecture_id as lectureId,
-            r.mb_id as mbId,
-            r.rating,
-            r.content,
-            r.created_at as createdAt,
-            m.nickname
-        FROM lecture_evaluation r
-        JOIN member m ON r.mb_id = m.mb_id
-        WHERE r.lecture_id = #{lectureId}
-        <choose>
-            <when test="sort == 'high'">
-                ORDER BY r.rating DESC, r.created_at DESC
-            </when>
-            <when test="sort == 'low'">
-                ORDER BY r.rating ASC, r.created_at DESC
-            </when>
-            <otherwise>
-                ORDER BY r.created_at DESC
-            </otherwise>
-        </choose>
+            le_eval_id as leEvalId,
+            le_id      as leId,
+            mb_id      as mbId,
+            score,
+            content,
+            created_at as createdAt  
+        FROM lecture_evaluation
+        WHERE le_id = #{leId}
+        ORDER BY le_eval_id DESC
     </select>
 
     <select id="selectReviewStats" resultType="map">
         SELECT 
             COUNT(*) as totalCount,
-            IFNULL(ROUND(AVG(rating), 1), 0) as avgRating,
-            COUNT(CASE WHEN rating = 5 THEN 1 END) as star5,
-            COUNT(CASE WHEN rating = 4 THEN 1 END) as star4,
-            COUNT(CASE WHEN rating = 3 THEN 1 END) as star3,
-            COUNT(CASE WHEN rating = 2 THEN 1 END) as star2,
-            COUNT(CASE WHEN rating = 1 THEN 1 END) as star1
+            IFNULL(AVG(score), 0) as avgScore,
+            COUNT(CASE WHEN score = 5 THEN 1 END) as star5,
+            COUNT(CASE WHEN score = 4 THEN 1 END) as star4,
+            COUNT(CASE WHEN score = 3 THEN 1 END) as star3,
+            COUNT(CASE WHEN score = 2 THEN 1 END) as star2,
+            COUNT(CASE WHEN score = 1 THEN 1 END) as star1
         FROM lecture_evaluation
-        WHERE lecture_id = #{lectureId}
+        WHERE le_id = #{leId}
     </select>
 
 </mapper>

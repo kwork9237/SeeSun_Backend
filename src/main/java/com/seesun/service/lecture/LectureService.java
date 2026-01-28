@@ -48,8 +48,8 @@ public class LectureService {
     // 3. 강의 생성
     @Transactional
     public Long createLecture(LectureCreateDTO createDTO, Long mbId) {
-        try {
-            createDTO.setMbId(mbId);
+    	try {
+        	createDTO.setMbId(mbId);
             short lgTypeId = languageCategoryMapper.getCategoryDataByCode(
         			createDTO.getLanguage().toUpperCase()).getLg_type_id();
 
