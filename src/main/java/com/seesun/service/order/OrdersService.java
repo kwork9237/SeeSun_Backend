@@ -31,6 +31,13 @@ public class OrdersService {
     // 1. 주문 생성 로직 (비즈니스 로직)
     @Transactional // DB 작업하다가 에러나면 자동 취소(롤백)
     public Map<String, Object> createOrder(Long mbId, Long leId) {
+        // 정원 체크 로직
+        int current = ordersMapper.countActiveOrdersByLeId(leId);
+        int max = ordersMapper.getMaxStudentsByLeId(leId);
+
+        // 수강인원 초과 에러 발생
+        if (current >= max) throw new GlobalException(ErrorCode.PAYMENT_FULL);
+
         // 강의 및 유저 정보 조회
         Map<String, Object> lectureInfo = ordersMapper.findLectureById(leId);
         Map<String, Object> memberInfo = ordersMapper.findMemberById(mbId);
@@ -85,7 +92,6 @@ public class OrdersService {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-
         // 성공 시 DB 업데이트
         if (response.statusCode() == 200) {
             ObjectMapper mapper = new ObjectMapper();
@@ -97,23 +103,27 @@ public class OrdersService {
             updateOrder.setPayment_key(paymentKey);
             updateOrder.setMethod(method);
 
+            // 1. 주문 테이블 상태 업데이트 (결제 완료)
             ordersMapper.updatePaymentSuccess(updateOrder);
 
-            // 수강신청 조회 테이블 값 삽입을 위한 정보 추출
+            // 2. 추가 로직 처리를 위한 주문 정보 조회
             OrdersDTO orderInfo = ordersMapper.findOrderByOrderId(orderId);
 
-            // 수강신청 조회 테이블 값 삽입
             if(orderInfo != null){
+                // 3. 해당 강의(le_id)로 등록된 모든 시간대 스케줄의 현재 인원을 1씩 증가시킴
+                // "통합 인원 관리"를 위해 해당 강의 아이디와 연결된 모든 스케줄에 반영
+                ordersMapper.updateAllScheduleCurrentStudents(orderInfo.getLe_id());
+
+                // 4. 수강신청 조회 테이블(member_enrollment)에 데이터 삽입
                 ordersMapper.insertEnrollment(orderInfo.getMb_id(), orderInfo.getLe_id());
             }
 
-            System.out.println("✅ Service: 결제 승인 및 DB 업데이트 완료 -> " + orderId);
+            System.out.println("✅ Service: 결제 승인, 인원 업데이트 및 수강등록 완료 -> " + orderId);
         } else {
             System.err.println("❌ Service: 승인 실패 응답 -> " + response.body());
             throw new GlobalException(ErrorCode.PAYMENT_FAIL);
         }
     }
-
     // OrdersService.java 내부
 
     // [결제 내역 조회]

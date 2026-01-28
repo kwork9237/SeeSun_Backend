@@ -38,6 +38,7 @@ public enum ErrorCode {
 	
 	// 결제 관련 오류
 	PAYMENT_FAIL(500, "P001", "결제 승인 실패"),
+	PAYMENT_FULL(500,"P002", "수강 정원이 초과"),
 
 	// WebRTC + Janus 관련 오류 (작성자:홍진기 - Janus 기반 리팩토링)
 	WEBRTC_INVALID_SESSION(400, "W001", "유효하지 않은 세션 ID입니다."),

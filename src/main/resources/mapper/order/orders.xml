@@ -13,6 +13,7 @@
         SELECT name AS customerName FROM member WHERE mb_id = #{mb_Id}
     </select>
 
+    <!-- 1차 결제 정보 DB 삽입   -->
     <insert id="insertOrder" parameterType="orders">
         INSERT INTO orders (
             order_id, mb_id, le_id, cost, title,
@@ -23,6 +24,7 @@
                  )
     </insert>
 
+    <!-- 2차 결제 정보 DB 삽입   -->
     <update id="updatePaymentSuccess" parameterType="orders">
         UPDATE orders
         SET
@@ -41,6 +43,7 @@
         insert into member_enrollment (mb_id, le_id) values (#{mb_id}, #{le_id})
     </insert>
 
+    <!--결제 내역  -->
     <select id="getPaymentHistory" resultType="map">
         SELECT
             o.order_id,
@@ -58,5 +61,22 @@
           AND o.status = 2  /* 결제 완료된 것만 */
         ORDER BY o.approved_at DESC
     </select>
+
+    <!-- 결제 완료된 인원수 조회  -->
+    <select id="countActiveOrdersByLeId" resultType="int">
+        SELECT COUNT(*) FROM orders WHERE le_id = #{leId} AND status = 2
+    </select>
+
+    <!-- 강의 최대 인원수 조회  -->
+    <select id="getMaxStudentsByLeId" resultType="int">
+        SELECT max_students FROM lecture_schedule WHERE le_id = #{leId} LIMIT 1
+    </select>
+
+    <!-- 결제 성공시 해당 강의의 현재 인원 +1 -->
+    <update id="updateAllScheduleCurrentStudents">
+        UPDATE lecture_schedule
+        SET current_students = current_students + 1
+        WHERE le_id = #{leId}
+    </update>
 
 </mapper>

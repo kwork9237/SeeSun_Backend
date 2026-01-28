@@ -28,4 +28,13 @@ public interface OrdersMapper {
 
     // 결제 정보 가져오기
     List<Map<String, Object>> getPaymentHistory(Long mbId);
+
+    // 현재 결제 완료된 인원수 조회
+    int countActiveOrdersByLeId(Long leId);
+
+    // 강의의 최대 정원 조회
+    int getMaxStudentsByLeId(Long leId);
+
+    // 결제 성공 시 해당 강의의 모든 스케줄 현재 인원 +1 업데이트
+    void updateAllScheduleCurrentStudents(Long leId);
 }
