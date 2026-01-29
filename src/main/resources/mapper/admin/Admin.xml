@@ -30,7 +30,7 @@
             req_id as reqId,
             mb_id as mbId,
             details,
-            attachment,
+           file_id as fileId,
             req_state as reqState
         FROM request_mento
         ORDER BY req_id DESC
@@ -59,22 +59,68 @@
     
 	<select id="selectSuggestionDetail" resultType="com.seesun.dto.suggestion.SuggestionDTO">
         SELECT 
-            sg_id AS sgId,
-            mb_id AS mbId,
-            title,
-            content,
-            view_count AS viewCount,
-            created_at AS createdAt,
-            modified_at AS modifiedAt
-        FROM suggestions
-        WHERE sg_id = #{sgId}
+            s.sg_id AS sgId,
+            s.mb_id AS mbId,
+            s.title,
+            s.content,
+            s.view_count AS viewCount,
+            s.created_at AS createdAt,
+            s.modified_at AS modifiedAt,
+            -- 답변 테이블 데이터 가져오기
+            sa.content AS answerContent,
+            sa.created_at AS answerCreatedAt
+        FROM suggestions s
+        LEFT JOIN suggestion_answer sa ON s.sg_id = sa.sg_id
+        WHERE s.sg_id = #{sgId}
+        -- 답변이 여러 개일 경우 최신 답변 1개만 가져오기 (옵션)
+        ORDER BY sa.sg_ans_id DESC 
+        LIMIT 1
     </select>
 
     <update id="increaseSuggestionViewCount" parameterType="long">
         UPDATE suggestions
         SET view_count = view_count + 1
         WHERE sg_id = #{sgId}
-    </update>   
+    </update>
+    
+    <insert id="insertSuggestionAnswer" parameterType="com.seesun.dto.suggestion.SuggestionAnswerDTO">
+        INSERT INTO suggestion_answer (
+            sg_id, 
+            mb_id, 
+            content, 
+            parent_id, 
+            created_at, 
+            modified_at
+        ) VALUES (
+            #{sgId}, 
+            #{mbId}, 
+            #{content}, 
+            NULL, 
+            NOW(), 
+            NOW()
+        )
+    </insert>
+    
+    <select id="countAnswerBySgId" resultType="int">
+        SELECT COUNT(*) 
+        FROM suggestion_answer 
+        WHERE sg_id = #{sgId}
+    </select>
+
+    <update id="updateSuggestionAnswer" parameterType="com.seesun.dto.suggestion.SuggestionAnswerDTO">
+        UPDATE suggestion_answer
+        SET 
+            content = #{content},
+            modified_at = NOW()
+        WHERE sg_id = #{sgId}
+        ORDER BY sg_ans_id DESC 
+        LIMIT 1
+    </update>
+    
+    <delete id="deleteSuggestion" parameterType="long">
+        DELETE FROM suggestions 
+        WHERE sg_id = #{sgId}
+    </delete>
     
     
 	<select id="selectNotificationList" resultType="com.seesun.dto.notification.NotificationDTO">

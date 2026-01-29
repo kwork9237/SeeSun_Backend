@@ -30,6 +30,18 @@ public interface AdminMapper {
 	void increaseSuggestionViewCount(Long sgId);
 	SuggestionDTO selectSuggestionDetail(Long sgId);
 	
+	// [추가] 답변 존재 여부 확인
+    int countAnswerBySgId(Long sgId);
+
+    // [추가] 답변 수정
+    void updateSuggestionAnswer(com.seesun.dto.suggestion.SuggestionAnswerDTO dto);
+    
+    // [추가] 답변 등록 메서드
+    void insertSuggestionAnswer(com.seesun.dto.suggestion.SuggestionAnswerDTO dto);
+    
+    // [추가] 건의사항 삭제 메서드
+    void deleteSuggestion(Long sgId);
+	
 	// 공지 사항
     List<NotificationDTO> selectNotificationList();
 
