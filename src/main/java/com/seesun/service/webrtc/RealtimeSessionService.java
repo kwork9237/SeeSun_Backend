@@ -240,6 +240,7 @@ public class RealtimeSessionService {
 
     private String allocateRoomId(Long lectureId) {
         // Janus 방 번호 생성 정책
-        return String.valueOf(100000 + lectureId);
+//        return String.valueOf(100000 + lectureId);
+        return String.valueOf(lectureId);
     }
 }
