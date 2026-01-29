@@ -2,16 +2,17 @@ package com.seesun.mapper.admin;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param; // [필수] Param 임포트 확인
 
+import com.seesun.dto.admin.MemberManageDTO;
 import com.seesun.dto.admin.MentoRequestListDTO;
 import com.seesun.dto.notification.NotificationDTO;
-// [필수 추가] 건의사항 DTO Import
 import com.seesun.dto.suggestion.SuggestionDTO;
 
 @Mapper
 public interface AdminMapper {
 
-	// 관리자 메인
+	// 관리자 메인 통계
 	int countNewMentorRequests();
 	int countReportedLectures();
     int countSuggestions();
@@ -22,24 +23,28 @@ public interface AdminMapper {
 	// 멘토 승인 처리
 	int updateRequestStatus(int reqId);
 	
+	// ---------------------------------------------------------
+	// [수정 완료] 전체 회원 조회 (검색 기능: 키워드 + 타입)
+    // ---------------------------------------------------------
+    List<MemberManageDTO> selectAllMembers(@Param("keyword") String keyword, @Param("searchType") String searchType);
+	
 	// 건의사항 조회
-    // [추가됨] XML의 id="selectSuggestionList"와 이름이 같아야 합니다.
 	List<SuggestionDTO> selectSuggestionList();
 	
-	//건의사항 상세보기
+	// 건의사항 상세보기
 	void increaseSuggestionViewCount(Long sgId);
 	SuggestionDTO selectSuggestionDetail(Long sgId);
 	
-	// [추가] 답변 존재 여부 확인
+	// 답변 존재 여부 확인
     int countAnswerBySgId(Long sgId);
 
-    // [추가] 답변 수정
+    // 답변 수정
     void updateSuggestionAnswer(com.seesun.dto.suggestion.SuggestionAnswerDTO dto);
     
-    // [추가] 답변 등록 메서드
+    // 답변 등록
     void insertSuggestionAnswer(com.seesun.dto.suggestion.SuggestionAnswerDTO dto);
     
-    // [추가] 건의사항 삭제 메서드
+    // 건의사항 삭제
     void deleteSuggestion(Long sgId);
 	
 	// 공지 사항

@@ -2,10 +2,8 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-  
 
-	
-	<mapper namespace="com.seesun.mapper.admin.AdminMapper">
+<mapper namespace="com.seesun.mapper.admin.AdminMapper">
 
     <select id="countNewMentorRequests" resultType="int">
         SELECT COUNT(*) FROM request_mento WHERE req_state = 0
@@ -25,24 +23,58 @@
         WHERE is_answered = 0
     </select>
 	
-	<select id="selectPendingRequests" resultType="com.seesun.dto.admin.MentoRequestListDTO">
+    <select id="selectPendingRequests" resultType="com.seesun.dto.admin.MentoRequestListDTO">
         SELECT 
             req_id as reqId,
             mb_id as mbId,
             details,
-           file_id as fileId,
+            file_id as fileId,
             req_state as reqState
         FROM request_mento
         ORDER BY req_id DESC
     </select>
 
-	<update id="updateRequestStatus" parameterType="int">
+    <update id="updateRequestStatus" parameterType="int">
         UPDATE request_mento rm
         INNER JOIN member m ON rm.mb_id = m.mb_id
         SET rm.req_state = 1, 
             m.mb_type_id = 2
         WHERE rm.req_id = #{reqId}
     </update>
+    
+    <select id="selectAllMembers" resultType="com.seesun.dto.admin.MemberManageDTO">
+        SELECT 
+            mb_id AS mbId,
+            username,
+            name,
+            nickname,
+            phone,
+            mb_type_id AS mbTypeId,
+            created_at AS createdAt
+        FROM member
+        WHERE 1=1
+        <if test="keyword != null and keyword != ''">
+            <choose>
+                <when test="searchType == 'username'">
+                    AND username LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <when test="searchType == 'name'">
+                    AND name LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <when test="searchType == 'nickname'">
+                    AND nickname LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <otherwise>
+                    AND (
+                        username LIKE CONCAT('%', #{keyword}, '%') 
+                        OR name LIKE CONCAT('%', #{keyword}, '%') 
+                        OR nickname LIKE CONCAT('%', #{keyword}, '%')
+                    )
+                </otherwise>
+            </choose>
+        </if>
+        ORDER BY mb_id DESC
+    </select>
     
     <select id="selectSuggestionList" resultType="com.seesun.dto.suggestion.SuggestionDTO">
         SELECT 
@@ -57,7 +89,7 @@
         ORDER BY sg_id DESC
     </select>
     
-	<select id="selectSuggestionDetail" resultType="com.seesun.dto.suggestion.SuggestionDTO">
+    <select id="selectSuggestionDetail" resultType="com.seesun.dto.suggestion.SuggestionDTO">
         SELECT 
             s.sg_id AS sgId,
             s.mb_id AS mbId,
@@ -66,13 +98,11 @@
             s.view_count AS viewCount,
             s.created_at AS createdAt,
             s.modified_at AS modifiedAt,
-            -- 답변 테이블 데이터 가져오기
             sa.content AS answerContent,
             sa.created_at AS answerCreatedAt
         FROM suggestions s
         LEFT JOIN suggestion_answer sa ON s.sg_id = sa.sg_id
         WHERE s.sg_id = #{sgId}
-        -- 답변이 여러 개일 경우 최신 답변 1개만 가져오기 (옵션)
         ORDER BY sa.sg_ans_id DESC 
         LIMIT 1
     </select>
@@ -122,8 +152,7 @@
         WHERE sg_id = #{sgId}
     </delete>
     
-    
-	<select id="selectNotificationList" resultType="com.seesun.dto.notification.NotificationDTO">
+    <select id="selectNotificationList" resultType="com.seesun.dto.notification.NotificationDTO">
 		SELECT 
 			nt_id AS ntId,
 			mb_id AS mbId,
@@ -136,8 +165,7 @@
 		ORDER BY nt_id DESC
 	</select>
 	
-
-	<insert id="insertNotification" parameterType="com.seesun.dto.notification.NotificationDTO">
+    <insert id="insertNotification" parameterType="com.seesun.dto.notification.NotificationDTO">
         INSERT INTO notification (
             mb_id, 
             title, 
@@ -174,7 +202,7 @@
 		WHERE nt_id = #{ntId}
 	</update>
 	
-	<update id="updateNotification" parameterType="com.seesun.dto.notification.NotificationDTO">
+    <update id="updateNotification" parameterType="com.seesun.dto.notification.NotificationDTO">
         UPDATE notification
         SET 
             title = #{title},

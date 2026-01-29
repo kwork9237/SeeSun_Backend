@@ -9,7 +9,7 @@ public class SuggestionDTO {
     private Long mbId;
     private String title;
     private String content;
-    private int viewCount;
+    private int viewCount;	
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     

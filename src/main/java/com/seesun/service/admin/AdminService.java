@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.seesun.dto.admin.AdminDTO;
+import com.seesun.dto.admin.MemberManageDTO;
 import com.seesun.dto.admin.MentoRequestListDTO;
 import com.seesun.dto.notification.NotificationDTO;
 // [필수] SuggestionDTO import 확인
@@ -42,6 +43,10 @@ public class AdminService {
     // 멘토승인 처리하기
     public boolean approveRequest(int reqId) {
         return adminMapper.updateRequestStatus(reqId) > 0;
+ }
+ // [수정] 전체 회원 조회 서비스
+    public List<MemberManageDTO> getAllMembers(String keyword) {
+        return adminMapper.selectAllMembers(keyword, keyword);
     }
 
     // 강의 신고

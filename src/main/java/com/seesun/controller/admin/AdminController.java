@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.seesun.dto.admin.AdminDTO;
+import com.seesun.dto.admin.MemberManageDTO;
 import com.seesun.dto.admin.MentoRequestListDTO;
 import com.seesun.dto.notification.NotificationDTO;
 import com.seesun.dto.suggestion.SuggestionDTO;
@@ -52,7 +54,22 @@ public class AdminController {
         return isApproved ? "SUCCESS" : "FAIL";
     }
     
-    // ---------------- [건의사항 관련] ----------------
+ // [수정] 전체 회원 목록 조회 API
+ 
+ // [수정] 전체 회원 목록 조회 (검색 기능 추가)
+    @GetMapping("/members")
+    public ResponseEntity<List<MemberManageDTO>> getAllMembers(
+            @RequestParam(value = "keyword", required = false) String keyword) { // keyword 추가
+        
+        System.out.println("회원 목록 조회 요청 - 검색어: " + keyword);
+        
+        // 서비스로 keyword 전달
+        List<MemberManageDTO> list = adminService.getAllMembers(keyword);
+        
+        return ResponseEntity.ok(list);
+    }
+    
+    // ---------------- [건의사항 관련] ----------------s
 
     // 건의사항 목록 조회
     @GetMapping("/suggestions")
@@ -130,4 +147,4 @@ public class AdminController {
         return ResponseEntity.ok("DELETED");
     }
 
-} // 클래스 끝
+} 
