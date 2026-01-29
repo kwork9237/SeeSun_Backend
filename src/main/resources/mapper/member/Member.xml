@@ -105,7 +105,7 @@
 		)
 	</select>
 	
-	<!--  -->
+	<!--멘토 신청 -->
 	<insert id="insertMentoRequest">
 		INSERT INTO request_mento (
 			mb_id,
