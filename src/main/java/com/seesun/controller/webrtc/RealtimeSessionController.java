@@ -5,6 +5,7 @@ import com.seesun.dto.webrtc.request.BootstrapRequestDTO;
 import com.seesun.dto.webrtc.request.EndSessionRequestDTO;
 import com.seesun.dto.webrtc.response.BootstrapResponseDTO;
 import com.seesun.dto.webrtc.response.RecordingResponseDTO;
+import com.seesun.global.uuid.UUIDUtil;
 import com.seesun.service.webrtc.JanusRoomService;
 import com.seesun.service.webrtc.RealtimeSessionService;
 import com.seesun.service.webrtc.SseEmitterService;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.File;
-import java.util.UUID;
 
 
 /**
@@ -61,7 +61,7 @@ public class RealtimeSessionController {
         // 방이 없으면 Janus에 방 생성
         int roomId = janusRoomService.ensureRoomExists(lectureId);
 
-        String sessionId = UUID.randomUUID().toString();
+        String sessionId = UUIDUtil.generate();
         String displayName = "mentor-" + lectureId + "-" + (int) (Math.random() * 99999);
 
         return new BootstrapResponseDTO(
@@ -83,7 +83,7 @@ public class RealtimeSessionController {
 
         int roomId = janusRoomService.ensureRoomExists(lectureId);
 
-        String sessionId = UUID.randomUUID().toString();
+        String sessionId = UUIDUtil.generate();
         String displayName = "mentee-" + lectureId + "-" + (int) (Math.random() * 99999);
 
         return new BootstrapResponseDTO(

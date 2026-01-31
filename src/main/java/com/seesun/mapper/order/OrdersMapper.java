@@ -27,4 +27,7 @@ public interface OrdersMapper {
     void insertEnrollment(@Param("mb_id") Long mbId, @Param("le_id") Long leId);
 
     List<Map<String, Object>> getPaymentHistory(Long mbId);
+    
+    // 수강 상태 확인
+    int checkMemberOrderStatus(@Param("mb_id") Long mbId, @Param("le_id") Long leId);
 }

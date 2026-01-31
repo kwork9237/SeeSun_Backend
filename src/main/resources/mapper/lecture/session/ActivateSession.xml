@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.seesun.mapper.lecture.session.ActivateSessionMapper">
+	<insert id="insertSessionData" parameterType="activateSession">
+		INSERT INTO activate_lecture_session (
+			room_id,
+			le_id,
+			history_id,
+			uuid
+		)
+		VALUES (
+			#{room_id},
+			#{le_id},
+			#{history_id},
+			#{uuid}
+		)
+	</insert>
+	
+	<delete id="deleteSessionData" parameterType="short">
+		DELETE FROM activate_lecture_session
+		WHERE room_id = #{room_id}
+	</delete>
+	
+	<select id="getSessionData" parameterType="string" resultType="activateSession">
+		SELECT * FROM activate_lecture_session
+		WHERE uuid = #{uuid}
+	</select>
+	
+	<select id="checkSessionByleId" resultType="int">
+		SELECT EXISTS (
+    		SELECT 1 FROM activate_lecture_session
+    		WHERE le_id = #{le_id}
+    	)
+	</select>
+</mapper>

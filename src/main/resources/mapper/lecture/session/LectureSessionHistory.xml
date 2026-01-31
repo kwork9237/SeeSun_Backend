@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.seesun.mapper.lecture.session.LectureSessionHistoryMapper">
+	<insert id="insertSessionData" parameterType="lectureSessionHistory" useGeneratedKeys="true" keyProperty="history_id">
+		INSERT INTO lecture_session_history (
+			room_id,
+			le_id,
+			mb_id
+		)
+		VALUES (
+			#{room_id},
+			#{le_id},
+			#{mb_id}
+		)
+	</insert>
+
+	<update id="deactivateSession">
+		UPDATE lecture_session_history
+		SET status = 0
+		WHERE
+			history_id = #{history_id} AND
+			status = 1
+	</update>
+</mapper>

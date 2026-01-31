@@ -152,4 +152,14 @@
         WHERE section_id = #{sectionId}
         ORDER BY order_num ASC
     </select>
+    
+    <!-- 세션 관련 검증로직 (멘토 확인) -->
+    <select id="checkLectureMember" resultType="int">
+    	SELECT EXISTS (
+    		SELECT 1 FROM lecture
+    		WHERE
+    			le_id = #{le_id} AND
+    			mb_id = #{mb_id}
+    	)
+    </select>
 </mapper>

@@ -47,4 +47,6 @@ public interface LectureMapper {
         @Param("endTime") String endTime,
         @Param("maxStudents") Integer maxStudents
     );
+    
+    int checkLectureMember(@Param("mb_id") Long mbId, @Param("le_id") Long leId);
 }

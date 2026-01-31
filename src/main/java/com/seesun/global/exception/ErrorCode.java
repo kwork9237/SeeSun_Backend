@@ -26,6 +26,8 @@ public enum ErrorCode {
 	// DB 관련 오류
 	DATABASE_INSERT_ERROR(500, "D001", "데이터 입력 실패"),
 	DATABASE_DELETE_ERROR(500, "D002", "데이터 삭제 실패"),
+	DATABASE_UPDATE_ERROR(500, "D003", "데이터 수정 실패"),
+	DATABASE_UNKNOWN_ERROR(500, "D004", "알 수 없는 DB 오류"),
 	
 	// 회원 관련 오류
 	IDPW_NOT_MATCH(401, "M001", "아이디 또는 비밀번호 오류"),
@@ -35,6 +37,14 @@ public enum ErrorCode {
 	
 	// 강의 관련 오류
 	LECTURE_NOT_FOUND(500, "L001", "강의 정보가 존재하지 않습니다."),
+	LECTURE_SESSION_CREATE_FAIL(500, "L002", "강의 세션 생성 실패"),
+	LECTURE_MENTO_NOT_MATCH(401, "L003", "올바르지 않은 사용자 정보"),
+	LECTURE_POOL_IS_FULL(500, "L004", "잔여 강의 세션이 없습니다."),
+	LECTURE_INVALID_PAYMENT_STATUS(500, "L005", "강의 결제 상태가 올바르지 않습니다."),
+	
+	// 세션 관련 오류
+	SESSION_NOT_FOUND(500, "S001", "세션 정보가 존재하지 않습니다."),
+	SESSION_EXISTS(500, "S002", "이미 존재하는 세션입니다."),
 	
 	// 결제 관련 오류
 	PAYMENT_FAIL(500, "P001", "결제 승인 실패"),

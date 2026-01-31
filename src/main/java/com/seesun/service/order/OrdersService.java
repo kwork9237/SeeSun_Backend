@@ -8,6 +8,7 @@ import com.seesun.global.exception.GlobalException;
 import com.seesun.mapper.order.OrdersMapper;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -120,5 +121,10 @@ public class OrdersService {
     public List<Map<String, Object>> getPaymentHistory(Long mbId) {
         // Mapper한테 "DB에서 긁어와!" 시키기
         return ordersMapper.getPaymentHistory(mbId);
+    }
+    
+    // 결제 상태만 확인
+    public int checkMemberOrderStatus(Long mbId, Long leId) {
+    	return ordersMapper.checkMemberOrderStatus(mbId, leId);
     }
 }

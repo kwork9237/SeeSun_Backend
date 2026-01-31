@@ -59,4 +59,15 @@
         ORDER BY o.approved_at DESC
     </select>
 
+	<!-- 세션 관련 검증 로직 -->
+	<select id="checkMemberOrderStatus" resultType="int">
+		SELECT EXISTS (
+			SELECT 1 FROM orders
+			WHERE
+				le_id = #{le_id} AND
+				mb_id = #{mb_id} AND
+				status = 2 AND
+				approved_at IS NOT NULL
+		)
+	</select>
 </mapper>
