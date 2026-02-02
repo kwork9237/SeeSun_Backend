@@ -2,59 +2,157 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-  
+
 <mapper namespace="com.seesun.mapper.admin.AdminMapper">
-	
-	<!-- 관리자 메인 -->
-	<select id="countNewMentorRequests" resultType="int">
-        SELECT COUNT(*) 
-        FROM request_mento where req_state = 0
+
+    <select id="countNewMentorRequests" resultType="int">
+        SELECT COUNT(*) FROM request_mento WHERE req_state = 0
     </select>
     
-    <!-- 2026 01 27 수정필요 -->
-    <!-- 활성화된 강의수(?) -->
     <select id="countReportedLectures" resultType="int">
-        SELECT COUNT(*) 
-        FROM lecture
-        WHERE is_active = 1
+        SELECT COUNT(*) FROM lecture WHERE is_active = 1
     </select>
     
+    <select id="countSuggestions" resultType="int">
+        SELECT COUNT(*) FROM suggestions
+    </select>
+  	
     <select id="countUnansweredInquiries" resultType="int">
-      <!--   SELECT COUNT(*) 
+        SELECT COUNT(*) 
         FROM suggestion
-        WHERE is_answered = 0 -->
+        WHERE is_answered = 0
     </select>
 	
-	<!-- 멘토 미승인 목록 -->
-	<select id="selectPendingRequests" resultType="mentoRequestList">
+    <select id="selectPendingRequests" resultType="com.seesun.dto.admin.MentoRequestListDTO">
         SELECT 
             req_id as reqId,
             mb_id as mbId,
             details,
-            file_id,
+            file_id as fileId,
             req_state as reqState
         FROM request_mento
-        WHERE req_state = 0
         ORDER BY req_id DESC
     </select>
 
-	<!-- 멘토 승인 처리  -->
-   <update id="updateRequestStatus" parameterType="int">
+    <update id="updateRequestStatus" parameterType="int">
         UPDATE request_mento rm
-	        INNER JOIN member m ON rm.mb_id = m.mb_id
-	        SET rm.req_state = 1, 
-	            m.mb_type_id = 2
+        INNER JOIN member m ON rm.mb_id = m.mb_id
+        SET rm.req_state = 1, 
+            m.mb_type_id = 2
         WHERE rm.req_id = #{reqId}
     </update>
     
-	
-	<!-- 강의 신고 -->
-	
-	
-	<!--건의 사항-->
-	
-	<!-- 공지사항 목록 -->
-   <select id="selectNotificationList" resultType="notification">
+    <select id="selectAllMembers" resultType="com.seesun.dto.admin.MemberManageDTO">
+        SELECT 
+            mb_id AS mbId,
+            username,
+            name,
+            nickname,
+            phone,
+            mb_type_id AS mbTypeId,
+            created_at AS createdAt
+        FROM member
+        WHERE 1=1
+        <if test="keyword != null and keyword != ''">
+            <choose>
+                <when test="searchType == 'username'">
+                    AND username LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <when test="searchType == 'name'">
+                    AND name LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <when test="searchType == 'nickname'">
+                    AND nickname LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <otherwise>
+                    AND (
+                        username LIKE CONCAT('%', #{keyword}, '%') 
+                        OR name LIKE CONCAT('%', #{keyword}, '%') 
+                        OR nickname LIKE CONCAT('%', #{keyword}, '%')
+                    )
+                </otherwise>
+            </choose>
+        </if>
+        ORDER BY mb_id DESC
+    </select>
+    
+    <select id="selectSuggestionList" resultType="com.seesun.dto.suggestion.SuggestionDTO">
+        SELECT 
+            sg_id AS sgId,
+            mb_id AS mbId,
+            title,
+            content,
+            view_count AS viewCount,
+            created_at AS createdAt,
+            modified_at AS modifiedAt
+        FROM suggestions
+        ORDER BY sg_id DESC
+    </select>
+    
+    <select id="selectSuggestionDetail" resultType="com.seesun.dto.suggestion.SuggestionDTO">
+        SELECT 
+            s.sg_id AS sgId,
+            s.mb_id AS mbId,
+            s.title,
+            s.content,
+            s.view_count AS viewCount,
+            s.created_at AS createdAt,
+            s.modified_at AS modifiedAt,
+            sa.content AS answerContent,
+            sa.created_at AS answerCreatedAt
+        FROM suggestions s
+        LEFT JOIN suggestion_answer sa ON s.sg_id = sa.sg_id
+        WHERE s.sg_id = #{sgId}
+        ORDER BY sa.sg_ans_id DESC 
+        LIMIT 1
+    </select>
+
+    <update id="increaseSuggestionViewCount" parameterType="long">
+        UPDATE suggestions
+        SET view_count = view_count + 1
+        WHERE sg_id = #{sgId}
+    </update>
+    
+    <insert id="insertSuggestionAnswer" parameterType="com.seesun.dto.suggestion.SuggestionAnswerDTO">
+        INSERT INTO suggestion_answer (
+            sg_id, 
+            mb_id, 
+            content, 
+            parent_id, 
+            created_at, 
+            modified_at
+        ) VALUES (
+            #{sgId}, 
+            #{mbId}, 
+            #{content}, 
+            NULL, 
+            NOW(), 
+            NOW()
+        )
+    </insert>
+    
+    <select id="countAnswerBySgId" resultType="int">
+        SELECT COUNT(*) 
+        FROM suggestion_answer 
+        WHERE sg_id = #{sgId}
+    </select>
+
+    <update id="updateSuggestionAnswer" parameterType="com.seesun.dto.suggestion.SuggestionAnswerDTO">
+        UPDATE suggestion_answer
+        SET 
+            content = #{content},
+            modified_at = NOW()
+        WHERE sg_id = #{sgId}
+        ORDER BY sg_ans_id DESC 
+        LIMIT 1
+    </update>
+    
+    <delete id="deleteSuggestion" parameterType="long">
+        DELETE FROM suggestions 
+        WHERE sg_id = #{sgId}
+    </delete>
+    
+    <select id="selectNotificationList" resultType="com.seesun.dto.notification.NotificationDTO">
 		SELECT 
 			nt_id AS ntId,
 			mb_id AS mbId,
@@ -66,9 +164,8 @@
 		FROM notification
 		ORDER BY nt_id DESC
 	</select>
-
-	<!-- 공지 사항 작성 -->
-	<insert id="insertNotification" parameterType="notification">
+	
+    <insert id="insertNotification" parameterType="com.seesun.dto.notification.NotificationDTO">
         INSERT INTO notification (
             mb_id, 
             title, 
@@ -86,8 +183,7 @@
         )
     </insert>
     
-    <!-- 공지사항 상세 조회 -->
-    <select id="selectNotificationDetail" resultType="notification">
+    <select id="selectNotificationDetail" resultType="com.seesun.dto.notification.NotificationDTO">
 		SELECT 
 			nt_id AS ntId,
 			mb_id AS mbId,
@@ -98,14 +194,26 @@
 			modified_at AS modifiedAt
 		FROM notification
 		WHERE nt_id = #{ntId}
-		
 	</select>
-	<!-- 조회수 증가 -->
+	
 	<update id="increaseViewCount" parameterType="Long">
 		UPDATE notification
 		SET view_count = view_count + 1
 		WHERE nt_id = #{ntId}
 	</update>
 	
-</mapper>
+    <update id="updateNotification" parameterType="com.seesun.dto.notification.NotificationDTO">
+        UPDATE notification
+        SET 
+            title = #{title},
+            content = #{content},
+            modified_at = NOW()
+        WHERE nt_id = #{ntId}
+    </update>
+    
+    <delete id="deleteNotification" parameterType="long">
+        DELETE FROM notification 
+        WHERE nt_id = #{ntId}
+    </delete>
 	
+</mapper>
