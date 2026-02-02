@@ -24,7 +24,6 @@ public class LectureController {
 
     /**
      * 1. 강의 생성 API
-     * try-catch를 Service로 이동하여 코드가 매우 간결해졌습니다.
      */
     @PostMapping
     public ResponseEntity<Long> createLecture(
@@ -32,8 +31,7 @@ public class LectureController {
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         
         log.info("강의 생성 요청 수신: {}", createDTO.getTitle());
-        
-        // 멘토 ID는 컨트롤러에서 추출하여 서비스로 넘겨주는 것이 정석입니다.
+
         Long mbId = userDetails.getMbId();
         Long lectureId = lectureService.createLecture(createDTO, mbId);
         
@@ -41,8 +39,8 @@ public class LectureController {
     }
 
     /**
-     * 2. 강의 목록 조회 API (필터링 포함)
-     * 응답 규격을 ResponseEntity로 감싸서 일관성을 유지합니다.
+     * 2. 강의 목록 조회 API
+     * 모든 @RequestParam에 name을 명시하여 인식을 보장합니다.
      */
     @GetMapping
     public ResponseEntity<List<LectureDTO>> getLectureList(
@@ -59,9 +57,10 @@ public class LectureController {
     
     /**
      * 3. 강의 상세 조회 API
+     * ✅ @PathVariable("id") 처럼 이름을 명시해야 에러가 발생하지 않습니다.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<LectureDTO> getLectureDetail(@PathVariable Long id) {
+    public ResponseEntity<LectureDTO> getLectureDetail(@PathVariable("id") Long id) {
         LectureDTO lecture = lectureService.getLectureDetail(id);
         return ResponseEntity.ok(lecture);
     }

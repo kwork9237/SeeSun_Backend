@@ -57,6 +57,6 @@ public class LectureDTO {
     private Integer maxStudents;     // 정원 (스케줄별)
     private Integer currentStudents; // 현재 신청 인원 (스케줄별)
 
-    private String modifiedAt;    // String으로 바꿨는지 확인!
-    private String progressStatus; // 이거 추가했는지 확인!
+    private String modifiedAt;    
+    private String progressStatus; 
 }
