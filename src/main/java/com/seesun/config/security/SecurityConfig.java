@@ -94,7 +94,9 @@ public class SecurityConfig {
 
                 // 마이페이지 API
                 .requestMatchers("/api/member/**").permitAll()
-                
+
+                // 채팅 SSE 전용 API + 인증 없이 허용
+                .requestMatchers("/api/seesun/session/chat/**").permitAll()
                 // WebSocket STOMP 허용
                 .requestMatchers("/ws/**", "/ws").permitAll()
                 .requestMatchers("/pub/**", "/sub/**").permitAll()

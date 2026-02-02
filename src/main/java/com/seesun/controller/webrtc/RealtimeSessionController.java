@@ -1,6 +1,5 @@
 package com.seesun.controller.webrtc;
 
-
 import com.seesun.dto.webrtc.request.BootstrapRequestDTO;
 import com.seesun.dto.webrtc.request.EndSessionRequestDTO;
 import com.seesun.dto.webrtc.response.BootstrapResponseDTO;
@@ -22,12 +21,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.File;
 
-
-/**
- * 실시간 강의(WebRTC + Janus) 관련 REST API 컨트롤러.
- * - Controller는 "매핑" 역할만 담당 (팀 규칙 준수)
- * - 모든 비즈니스 로직은 Service로 위임
- */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/seesun/session")
@@ -35,42 +28,41 @@ public class RealtimeSessionController {
 
     private final RealtimeSessionService realtimeSessionService;
     private final SseEmitterService sseEmitterService;
-
-    // 🔥 부족해서 오류난 부분 — 필드 추가
     private final JanusRoomService janusRoomService;
 
     @Value("${seesun.janus.base-url}")
     private String janusUrl;
 
-
-    // 기존 멘토 / 멘티 (서버가 역할 구분할때 사용 지우지 마세요)
-//    @PostMapping("/bootstrap")
-//    public BootstrapResponseDTO bootstrap(@RequestBody BootstrapRequestDTO req) {
-//        System.out.println("test");
-//        Long memberId = getLoginMemberId();
-//        return realtimeSessionService.bootstrap(req.getLectureId(), memberId);
-//    }
-
-    // 테스트 만
+    /**
+     * MENTOR / MENTEE 공용 Bootstrap
+     * role은 프론트에서 명시적으로 전달한다.
+     */
     @PostMapping("/bootstrap")
-    public BootstrapResponseDTO bootstrap(@RequestBody BootstrapRequestDTO req,
-                                          HttpServletRequest servletReq) {
-
+    public BootstrapResponseDTO bootstrap(
+            @RequestBody BootstrapRequestDTO req
+    ) {
         long lectureId = req.getLectureId();
-
-        // 방이 없으면 Janus에 방 생성
         int roomId = janusRoomService.ensureRoomExists(lectureId);
 
+        // 프론트가 role을 보내도록 한다.
+        String role = (req.getRole() == null) ? "MENTEE" : req.getRole().toUpperCase();
+
         String sessionId = UUIDUtil.generate();
-        String displayName = "mentor-" + lectureId + "-" + (int) (Math.random() * 99999);
+        String displayName;
+
+        if (role.equals("MENTOR")) {
+            displayName = "mentor-" + lectureId + "-" + (int)(Math.random() * 99999);
+        } else {
+            displayName = "mentee-" + lectureId + "-" + (int)(Math.random() * 99999);
+        }
 
         return new BootstrapResponseDTO(
                 sessionId,
                 String.valueOf(roomId),
                 janusUrl,
-                "MENTOR",
+                role,
                 displayName,
-                displayName
+                role.equals("MENTOR") ? displayName : null
         );
     }
 
@@ -96,22 +88,17 @@ public class RealtimeSessionController {
         );
     }
 
-
-
-
     @PostMapping("/end")
     public void endSession(@RequestBody EndSessionRequestDTO req) {
         Long memberId = getLoginMemberId();
         realtimeSessionService.endSession(req.getSessionId(), memberId);
     }
 
-    // ✅ 프론트에서 호출하는 녹화 상태 조회 API
     @GetMapping("/recording")
     public RecordingResponseDTO recording(@RequestParam String sessionId) {
         return realtimeSessionService.getRecording(sessionId);
     }
 
-    // ✅ 녹화 파일 다운로드(또는 브라우저 재생)
     @GetMapping("/recordings/file")
     public ResponseEntity<Resource> downloadRecording(@RequestParam String sessionId) {
         File file = realtimeSessionService.getRecordingFile(sessionId);
@@ -127,7 +114,6 @@ public class RealtimeSessionController {
                 .body(resource);
     }
 
-
     @GetMapping("/events")
     public SseEmitter sse(@RequestParam String sessionId) {
         Long memberId = getLoginMemberId();
@@ -136,7 +122,6 @@ public class RealtimeSessionController {
     }
 
     private Long getLoginMemberId() {
-        // TODO: 로그인 사용자 ID 가져오기
-        return 1L;
+        return 1L; // TODO: Authentication 적용시 수정
     }
 }
