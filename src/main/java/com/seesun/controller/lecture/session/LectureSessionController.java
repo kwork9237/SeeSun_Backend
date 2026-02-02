@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class LectureSessionController {
 	private final LectureSessionService sessionService;
 	
-	public record CreateSessionRequest(Long leId) {}
+	public record SessionRequestByLeId(Long leId) {}
 	
 	// 강의 세션 생성
 	// 강의 시작 버튼 클릭 > 컨트롤러 실행 > 페이지 이동
@@ -28,10 +28,10 @@ public class LectureSessionController {
 	// webRTC의 방 번호는 같이 return된 roomUuid를 활용한다. 
 	@PostMapping("/create")
 	public ResponseEntity<?> createSession(@AuthenticationPrincipal CustomUserDetails user, 
-			@RequestBody CreateSessionRequest leId) {
+			@RequestBody SessionRequestByLeId req) {
 
 		return ResponseEntity.ok(
-				sessionService.create(user.getMbId(), leId.leId())
+				sessionService.create(user.getMbId(), req.leId())
 			);
 	}
 	
@@ -55,5 +55,15 @@ public class LectureSessionController {
 		sessionService.validate(user.getMbId(), uuid);
 		
 		return ResponseEntity.ok("성공");
+	}
+	
+	// 강의 세션 확인
+	@GetMapping("/check")
+	public ResponseEntity<?> checkSession(@AuthenticationPrincipal CustomUserDetails user,
+			@RequestBody SessionRequestByLeId req) {
+		
+		sessionService.check(req.leId());
+		
+		return ResponseEntity.ok(null);
 	}
 }

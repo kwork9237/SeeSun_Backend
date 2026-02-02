@@ -122,4 +122,9 @@ public class LectureSessionService {
 		if(ordersService.checkMemberOrderStatus(mbId, ssData.getLe_id()) != 1)
 			throw new GlobalException(ErrorCode.LECTURE_INVALID_PAYMENT_STATUS);
 	}
+	
+	@Transactional
+	public void check(Long leId) {
+		
+	}
 }
