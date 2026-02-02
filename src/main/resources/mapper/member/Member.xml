@@ -105,7 +105,7 @@
 		)
 	</select>
 	
-	<!--  -->
+	<!--멘토 신청 -->
 	<insert id="insertMentoRequest">
 		INSERT INTO request_mento (
 			mb_id,
@@ -119,17 +119,15 @@
 		)
 	</insert>
 
-	<!-- 2026 01 27 수정필요 -->
 	<!-- 회원 정보 조회 -->
-	<select id="getMyPageInfo" resultType="myPage" parameterType="long">
+	<select id="getMyPageInfo" resultType="membersearch">
 		SELECT
+		    mb_id as mbId ,
 			username,
 			name,
 			nickname,
 			phone,
-			profile_icon,
-			mb_type_id,
-			created_at
+			created_at as createdAt
 		FROM member
 		WHERE mb_id = #{mb_id}
 	</select>

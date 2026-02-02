@@ -1,5 +1,6 @@
 package com.seesun.mapper.member;
 
+import com.seesun.dto.member.request.MemberSearchDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -38,7 +39,6 @@ public interface MemberMapper {
 	// 멘토 요청 추가
 	public void insertMentoRequest(MentoRequestDTO data);
 
-	// 2026 01 27 수정필요
-	// 내 정보 조회 (마이페이지용)
-//	public MyPageDTO getMyPageInfo(@Param("mb_id") Long mbId);
+	// 내 정보 조회
+	public MemberSearchDTO getMyPageInfo(@Param("mb_id") Long mbId);
 }

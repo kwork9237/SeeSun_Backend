@@ -24,16 +24,24 @@
             l.le_id       AS leId,
             l.title       AS title,
             l.content     AS content,
-            l.avg_score   AS avgScore,
             l.cost        AS cost,
             l.is_active   AS isActive,
+
+            /* [변경] 실시간 평점 집계: lecture_evaluation 테이블의 평균값 계산 */
+            IFNULL(
+                    (SELECT ROUND(AVG(score), 1)
+                     FROM lecture_evaluation e
+                     WHERE e.le_id = l.le_id),
+                    0.0
+            ) AS avgScore,
 
             /* [집계 1] 현재 실제 수강생 수 (결제완료 상태인 주문 건수) */
             (SELECT COUNT(*)
              FROM orders o
              WHERE o.le_id = l.le_id
-               AND o.status = 2) AS currentStudents,  /* [집계 2] 최대 정원 (스케줄 중 가장 큰 값) */
-            /* 스케줄이 아직 없는 강의는 0으로 표시 (IFNULL 처리) */
+               AND o.status = 2) AS currentStudents,
+
+            /* [집계 2] 최대 정원 (스케줄 중 가장 큰 값) */
             IFNULL(
                     (SELECT MAX(max_students)
                      FROM lecture_schedule

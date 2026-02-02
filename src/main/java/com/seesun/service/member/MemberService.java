@@ -2,6 +2,7 @@ package com.seesun.service.member;
 
 import java.util.Set;
 
+import com.seesun.dto.member.request.MemberSearchDTO;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.seesun.dto.member.request.LoginRequestDTO;
 import com.seesun.dto.member.request.MemberJoinDTO;
 import com.seesun.dto.member.request.MentoRequestDTO;
+import com.seesun.dto.member.request.MemberSearchDTO;
 import com.seesun.dto.member.response.LoginResponseDTO;
 import com.seesun.global.exception.ErrorCode;
 import com.seesun.global.exception.GlobalException;
@@ -124,9 +126,8 @@ public class MemberService {
 		
 	}
 
-	// 2026 01 27 수정필요
-	// 내 정보 조회
-//	public MyPageDTO getMyPageInfo(Long mbId) {
-//		return memberMapper.getMyPageInfo(mbId);
-//	}
+		// 내 정보 조회
+	public MemberSearchDTO getMyPageInfo(Long mbId) {
+		return memberMapper.getMyPageInfo(mbId);
+	}
 }
