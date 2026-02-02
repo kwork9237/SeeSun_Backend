@@ -21,13 +21,52 @@
             m.name AS mb_nickname,
             l.cost AS le_price,
             m.profile_icon AS le_thumb,
-            IFNULL(AVG(ev.score), 0.0) AS mentor_rate
+            
+            /* 평점 계산:
+               리뷰가 없으면 NULL이 나오므로 IFNULL을 사용하여 0.0점으로 처리합니다.
+               AVG() 함수를 통해 해당 강의에 달린 리뷰들의 평균 점수를 구합니다.
+            */
+            IFNULL(AVG(ev.score), 0.0) AS mentor_rate,
+            
+            /* 수업 시간 계산:
+               스케줄 테이블(lecture_schedule)에서 시작시간과 종료시간의 차이(HOUR)를 구합니다.
+               여러 스케줄 중 대표값(MAX) 하나를 가져옵니다. (1회 수업 시간)
+            */
+            IFNULL(MAX(TIMESTAMPDIFF(HOUR, s.start_time, s.end_time)), 0) AS total_hours,
+
+            /* 가능 시간대 표시:
+               등록된 스케줄 중 가장 늦은 시간(MAX)을 'HH:mm' 형식으로 변환하여 보여줍니다.
+               스케줄이 아예 등록되지 않은 경우 '시간 협의'라는 문자열을 반환합니다.
+            */
+            IFNULL(DATE_FORMAT(MAX(s.start_time), '%H:%i'), '시간 협의') AS available_time
+            
         FROM lecture l
+        /* 멘토 정보는 필수이므로 INNER JOIN */
         JOIN member m ON l.mb_id = m.mb_id
+        
+        /* LEFT JOIN 사용 이유:
+           1. 리뷰(ev)가 없는 신규 강의도 목록에 떠야 하므로 LEFT JOIN 사용.
+           2. 스케줄(s)이 아직 등록 안 된 강의도 목록에 떠야 하므로 LEFT JOIN 사용.
+        */
         LEFT JOIN lecture_evaluation ev ON l.le_id = ev.le_id
+        LEFT JOIN lecture_schedule s ON l.le_id = s.le_id
+        
+        /* 조회 조건: 카테고리 일치 활성화된 강의 */
         WHERE l.lg_type_id = #{lg_type_id}
           AND l.is_active = 1
-        GROUP BY l.le_id, l.title, m.nickname, l.cost, m.profile_icon
+          
+        /* GROUP BY:
+           집계 함수(AVG, MAX 등)를 제외한 조회 컬럼들을 모두 명시해야 합니다.
+           강의(l.le_id) 기준으로 묶어서 평점 평균 등을 계산합니다.
+        */
+        GROUP BY 
+            l.le_id, 
+            l.title, 
+            m.name, 
+            l.cost, 
+            m.profile_icon
+            
+        /* 정렬: 평점 높은 순(DESC) -> 상위 3개(LIMIT 3) */
         ORDER BY mentor_rate DESC
         LIMIT 3
     </select>
