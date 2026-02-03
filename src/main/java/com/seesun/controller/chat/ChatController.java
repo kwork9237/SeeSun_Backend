@@ -23,7 +23,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
  *    - 메시지 전송 (멘토/멘티가 채팅 입력 시 호출)
  */
 @RestController
-@RequestMapping("/api/seesun/session/chat")
+@RequestMapping("/api/seesun/live/chat")
 @RequiredArgsConstructor
 public class ChatController {
 
@@ -38,7 +38,7 @@ public class ChatController {
 
 
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter stream(@RequestParam Long roomId) {
+    public SseEmitter stream(@RequestParam("roomId") Long roomId) {
         System.out.println("[SSE] new subscriber for lectureId = " + roomId);
         return chatService.connect(roomId);
     }

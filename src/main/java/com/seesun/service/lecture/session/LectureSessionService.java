@@ -83,7 +83,7 @@ public class LectureSessionService {
 	@Transactional
 	public void close(Long mbId, String uuid) {
 		// 현재 활성 세션 데이터 가져오기
-		ActivateSessionDTO ssData = activateSessionMapper.getSessionDataByUuid(uuid);
+		ActivateSessionDTO ssData = getSessionDataByUuid(uuid);
 		if(ssData == null)
 			throw new GlobalException(ErrorCode.SESSION_NOT_FOUND);
 		
@@ -107,7 +107,7 @@ public class LectureSessionService {
 	@Transactional
 	public void validate(Long mbId, String uuid) {
 		// 현재 활성 세션 데이터 가져오기
-		ActivateSessionDTO ssData = activateSessionMapper.getSessionDataByUuid(uuid);
+		ActivateSessionDTO ssData = getSessionDataByUuid(uuid);
 		if(ssData == null)
 			throw new GlobalException(ErrorCode.SESSION_NOT_FOUND);
 		
@@ -123,7 +123,7 @@ public class LectureSessionService {
 	@Transactional
 	public void start(Long mbId, String uuid) {
 		// 현재 활성 세션 데이터 가져오기
-		ActivateSessionDTO ssData = activateSessionMapper.getSessionDataByUuid(uuid);
+		ActivateSessionDTO ssData = getSessionDataByUuid(uuid);
 		if(ssData == null)
 			throw new GlobalException(ErrorCode.SESSION_NOT_FOUND);
 		
@@ -143,5 +143,11 @@ public class LectureSessionService {
 			throw new GlobalException(ErrorCode.SESSION_NOT_STARTED);
 		
 		return ssData.getUuid();
+	}
+	
+	
+	// 다른 service에서 사용 필요
+	public ActivateSessionDTO getSessionDataByUuid(String uuid) {
+		return activateSessionMapper.getSessionDataByUuid(uuid);
 	}
 }

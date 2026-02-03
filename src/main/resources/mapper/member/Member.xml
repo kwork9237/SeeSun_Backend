@@ -131,4 +131,11 @@
 		FROM member
 		WHERE mb_id = #{mb_id}
 	</select>
+	
+	<!-- 실시간 강의에 필요한 회원정보 -->
+	<select id="getMemberSessionInfo" resultType="memberSessionInfo">
+		SELECT nickname, mb_type_id
+		FROM member
+		WHERE mb_id = #{mb_id}
+	</select>
 </mapper>

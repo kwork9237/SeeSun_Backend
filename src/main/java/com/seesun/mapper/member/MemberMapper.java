@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import com.seesun.dto.auth.AuthenticationDTO;
 import com.seesun.dto.member.request.MemberJoinDTO;
 import com.seesun.dto.member.request.MentoRequestDTO;
+import com.seesun.dto.member.response.MemberSessionInfo;
 import com.seesun.dto.mypage.MyPageDTO;
 
 @Mapper
@@ -41,4 +42,8 @@ public interface MemberMapper {
 
 	// 내 정보 조회
 	public MemberSearchDTO getMyPageInfo(@Param("mb_id") Long mbId);
+	
+	// 세션에 필요한 정보조회
+	public MemberSessionInfo getMemberSessionInfo(@Param("mb_id") Long mbId);
+	
 }

@@ -20,4 +20,3 @@ public class MemberSearchDTO {
     private String phone;        // Phone
     private LocalDateTime createdAt;
 }
-

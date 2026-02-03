@@ -11,6 +11,8 @@ public enum ErrorCode {
 	INVALID_REQUEST(401, "U001", "잘못된 입력"),
 	UNAUTHORIZED(401, "U002", "로그인 상태에서만 가능합니다."),
 	
+	// 전역 오류
+	INVALID_REQUIRE_DATA(500, "G001", "필수 데이터가 누럭되었습니다."),
 	
 	// 파일 관련 오류
 	FILE_SAVE_FAIL(500, "F001", "파일 저장 실패"),
@@ -47,6 +49,7 @@ public enum ErrorCode {
 	SESSION_EXISTS(500, "S002", "이미 존재하는 세션입니다."),
 	NOT_SESSION_OWNER(500, "S003", "세션 소유자가 아닙니다."),
 	SESSION_NOT_STARTED(500, "S004", "진행중인 강의가 아닙니다."),
+	
 	
 	// 결제 관련 오류
 	PAYMENT_FAIL(500, "P001", "결제 승인 실패"),

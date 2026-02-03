@@ -8,6 +8,7 @@ import com.seesun.dto.webrtc.response.SessionEventDTO;
 import com.seesun.global.exception.ErrorCode;
 import com.seesun.global.exception.GlobalException;
 import com.seesun.repository.webrtc.InMemoryRealtimeSessionRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,7 @@ public class RealtimeSessionService {
     private final InMemoryRealtimeSessionRepository sessionRepo;
     private final SseEmitterService sseEmitterService;
     private final RecordingService recordingService;
+    private final com.seesun.mapper.lecture.LectureMapper lectureMapper;
 
     // Janus 서버 URL(환경변수 or 설정 파일에서 관리)
     private final String JANUS_URL = "https://janus.jsflux.co.kr/janus";
@@ -42,39 +44,13 @@ public class RealtimeSessionService {
      */
     public BootstrapResponseDTO bootstrap(Long lectureId, Long memberId) {
 
-//        boolean isMentor = isMentorOfLecture(lectureId, memberId);
-//        boolean enrolled = isEnrolled(lectureId, memberId);
-
-        // 멘티인데 수강 이력이 없으면 접근 불가
-//        if (!isMentor && !enrolled) {
-//            throw new GlobalException(ErrorCode.WEBRTC_MENTEE_NOT_ENROLLED);
-//        }
-
-        // ================= TEST MODE: URL 기반 멘토/멘티 강제 =================
-        // 이 값들은 Controller에서 넣어주거나 프론트에서 전달해도 됨
-        // 지금은 테스트용으로 lectureId 기준으로 처리
-
-        // 멘토 테스트 모드
-                if (lectureId == 999001L) {   // 👉 /mentor 경로에서 전달하도록 설정 가능
-                    memberId = 1L;            // 멘토 강제
-                }
-
-        // 멘티 테스트 모드
-                if (lectureId == 999002L) {   // 👉 /mentee 경로에서 전달하도록 설정 가능
-                    if (memberId == null) {
-                        memberId = -1L;       // 익명 멘티
-                    }
-                }
-        // ======================================================================
-
-
+        boolean isMentor = lectureMapper.checkLectureMember(lectureId, memberId) == 1;
 
         // 해당 강의의 ACTIVE 세션을 가져온다.
         RealtimeSession active = sessionRepo.findActiveByLectureId(lectureId).orElse(null);
 
         // 멘토의 경우
-//        if (isMentor) {
-        if(memberId == 1L) {
+        if (isMentor) {
             // 세션이 없으면 새로 생성
             if (active == null) {
                 return createSession(lectureId, memberId);
@@ -128,7 +104,6 @@ public class RealtimeSessionService {
             RealtimeSession s, String role,  String displayName) {
 
         return BootstrapResponseDTO.builder()
-                .sessionId(s.getSessionId())
                 .roomId(s.getRoomId())
                 .janusUrl(JANUS_URL)
                 .role(role)
@@ -220,16 +195,6 @@ public class RealtimeSessionService {
         if (!session.getMentorId().equals(memberId)) {
             throw new  GlobalException(ErrorCode.WEBRTC_MENTOR_ONLY);
         }
-    }
-
-    private boolean isMentorOfLecture(Long lectureId, Long memberId) {
-        // TODO: 강의 테이블에서 memberId 조회 후 비교
-        return false;
-    }
-
-    public boolean isEnrolled(Long lectureId, Long memberId) {
-        // TODO: 수강 테이블에서 조회
-        return true;
     }
 
     private String makeDisplayName(Long memberId, boolean mentor) {

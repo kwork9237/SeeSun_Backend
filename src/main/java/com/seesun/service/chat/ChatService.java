@@ -1,7 +1,10 @@
 package com.seesun.service.chat;
 
 import com.seesun.dto.chat.ChatMessageDTO;
+
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -32,13 +35,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ChatService {
 
     private final Map<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter connect(Long roomId) {
-        SseEmitter emitter = new SseEmitter(0L);
+    	// 제한시간 30분 추가
+        SseEmitter emitter = new SseEmitter(30L * 60 * 1000);
 
         emitters.computeIfAbsent(roomId, k -> new CopyOnWriteArrayList<>())
                 .add(emitter);
@@ -46,26 +51,43 @@ public class ChatService {
         emitter.onCompletion(() -> emitters.get(roomId).remove(emitter));
         emitter.onTimeout(() -> emitters.get(roomId).remove(emitter));
         emitter.onError((e) -> emitters.get(roomId).remove(emitter));
+        
+        // 최초 연결 확인
+        try {
+            emitter.send(SseEmitter.event().name("ping").data("connected"));
+        } catch (Exception e) {
+            remove(roomId, emitter);
+            emitter.complete();
+        }
 
         return emitter;
     }
 
-    private void remove(Long lectureId, SseEmitter emitter) {
-        List<SseEmitter> list = emitters.get(lectureId);
-        if (list != null) list.remove(emitter);
-    }
-
     public void broadcast(ChatMessageDTO dto) {
         List<SseEmitter> list = emitters.getOrDefault(dto.getRoomId(), new ArrayList<>());
+        log.info("[SSE] broadcast roomId={}, listeners={}", dto.getRoomId(), list.size());
 
         for (SseEmitter emitter : list) {
             try {
-                emitter.send(SseEmitter.event()
-                        .name("chat")
-                        .data(dto));
+                emitter.send(
+                		SseEmitter.event().name("chat").data(dto)
+            		);
             } catch (Exception e) {
+            	remove(dto.getRoomId(), emitter);
                 emitter.complete();
+                
+                e.printStackTrace();
             }
+        }
+    }
+    
+    private void remove(Long roomId, SseEmitter emitter) {
+        List<SseEmitter> list = emitters.get(roomId);
+        if (list == null) return;
+
+        list.remove(emitter);
+        if (list.isEmpty()) {
+            emitters.remove(roomId);
         }
     }
 

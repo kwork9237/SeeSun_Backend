@@ -51,7 +51,7 @@ public class LectureSessionController {
 	@GetMapping("/room/{id}")
 	public ResponseEntity<?> joinSession(@AuthenticationPrincipal CustomUserDetails user,
 			@PathVariable("id") String uuid) {
-
+		
 		sessionService.validate(user.getMbId(), uuid);
 		
 		return ResponseEntity.ok("성공");

@@ -17,7 +17,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatMessageDTO {
-    private Long roomId;   // 방 번호
+    private Long roomId;	  // 방 번호
     private String sender;    // 닉네임
     private String role;      // mentor / mentee / system
     private String text;      // 채팅 본문

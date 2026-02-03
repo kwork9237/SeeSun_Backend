@@ -17,6 +17,7 @@ import com.seesun.dto.member.request.LoginRequestDTO;
 import com.seesun.dto.member.request.MemberJoinDTO;
 import com.seesun.dto.member.request.MentoRequestDTO;
 import com.seesun.dto.member.response.LoginResponseDTO;
+import com.seesun.dto.member.response.MemberSessionInfo;
 import com.seesun.global.exception.ErrorCode;
 import com.seesun.global.exception.GlobalException;
 import com.seesun.mapper.member.MemberMapper;
@@ -125,8 +126,12 @@ public class MemberService {
 		
 	}
 
-		// 내 정보 조회
+	// 내 정보 조회
 	public MemberSearchDTO getMyPageInfo(Long mbId) {
 		return memberMapper.getMyPageInfo(mbId);
+	}
+	
+	public MemberSessionInfo getMemberSessionInfo(Long mbId) {
+		return memberMapper.getMemberSessionInfo(mbId);
 	}
 }
