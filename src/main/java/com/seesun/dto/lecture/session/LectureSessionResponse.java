@@ -1,9 +1,9 @@
 package com.seesun.dto.lecture.session;
 
 public record LectureSessionResponse(
-		Long history_id,
+		Long historyId,
 //		short room_id,
-		String room_uuid
+		String roomUuid
 	) {
 
 }

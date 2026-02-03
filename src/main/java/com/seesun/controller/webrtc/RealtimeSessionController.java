@@ -5,6 +5,7 @@ import com.seesun.dto.webrtc.request.EndSessionRequestDTO;
 import com.seesun.dto.webrtc.response.BootstrapResponseDTO;
 import com.seesun.dto.webrtc.response.RecordingResponseDTO;
 import com.seesun.global.uuid.UUIDUtil;
+import com.seesun.security.userdetail.CustomUserDetails;
 import com.seesun.service.webrtc.JanusRoomService;
 import com.seesun.service.webrtc.RealtimeSessionService;
 import com.seesun.service.webrtc.SseEmitterService;
@@ -16,6 +17,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -23,7 +25,7 @@ import java.io.File;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/seesun/session")
+@RequestMapping("/api/seesun/janus")
 public class RealtimeSessionController {
 
     private final RealtimeSessionService realtimeSessionService;
@@ -38,33 +40,43 @@ public class RealtimeSessionController {
      * role은 프론트에서 명시적으로 전달한다.
      */
     @PostMapping("/bootstrap")
-    public BootstrapResponseDTO bootstrap(
-            @RequestBody BootstrapRequestDTO req
-    ) {
-        long lectureId = req.getLectureId();
-        int roomId = janusRoomService.ensureRoomExists(lectureId);
-
-        // 프론트가 role을 보내도록 한다.
-        String role = (req.getRole() == null) ? "MENTEE" : req.getRole().toUpperCase();
-
-        String sessionId = UUIDUtil.generate();
-        String displayName;
-
-        if (role.equals("MENTOR")) {
-            displayName = "mentor-" + lectureId + "-" + (int)(Math.random() * 99999);
-        } else {
-            displayName = "mentee-" + lectureId + "-" + (int)(Math.random() * 99999);
-        }
-
-        return new BootstrapResponseDTO(
-                sessionId,
-                String.valueOf(roomId),
-                janusUrl,
-                role,
-                displayName,
-                role.equals("MENTOR") ? displayName : null
-        );
+    public BootstrapResponseDTO bootstrap(@AuthenticationPrincipal CustomUserDetails user) {
+    	
+    	
+    	
+    	return null;
     }
+    
+    
+    
+//    @PostMapping("/bootstrap")
+//    public BootstrapResponseDTO bootstrap(
+//            @RequestBody BootstrapRequestDTO req
+//    ) {
+//        long lectureId = req.getLectureId();
+//        int roomId = janusRoomService.ensureRoomExists(lectureId);
+//
+//        // 프론트가 role을 보내도록 한다.
+//        String role = (req.getRole() == null) ? "MENTEE" : req.getRole().toUpperCase();
+//
+//        String sessionId = UUIDUtil.generate();
+//        String displayName;
+//
+//        if (role.equals("MENTOR")) {
+//            displayName = "mentor-" + lectureId + "-" + (int)(Math.random() * 99999);
+//        } else {
+//            displayName = "mentee-" + lectureId + "-" + (int)(Math.random() * 99999);
+//        }
+//
+//        return new BootstrapResponseDTO(
+//                sessionId,
+//                String.valueOf(roomId),
+//                janusUrl,
+//                role,
+//                displayName,
+//                role.equals("MENTOR") ? displayName : null
+//        );
+//    }
 
     // 테스트 용도(멘토 / 멘티 페이지 분리시)
     @PostMapping("/join")

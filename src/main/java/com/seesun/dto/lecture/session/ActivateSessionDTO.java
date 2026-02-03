@@ -10,7 +10,9 @@ import lombok.Setter;
 @Alias("activateSession")
 public class ActivateSessionDTO {
 	private short room_id;
+	private Long mb_id;
 	private Long le_id;
 	private Long history_id;
 	private String uuid;
+	private short status;
 }

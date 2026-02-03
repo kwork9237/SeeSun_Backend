@@ -57,13 +57,23 @@ public class LectureSessionController {
 		return ResponseEntity.ok("성공");
 	}
 	
-	// 강의 세션 확인
-	@GetMapping("/check")
-	public ResponseEntity<?> checkSession(@AuthenticationPrincipal CustomUserDetails user,
-			@RequestBody SessionRequestByLeId req) {
+	// 강의 시작
+	@GetMapping("/start/{id}")
+	public ResponseEntity<?> startSession(@AuthenticationPrincipal CustomUserDetails user,
+			@PathVariable("id") String uuid) {
 		
-		sessionService.check(req.leId());
+		sessionService.start(user.getMbId(), uuid);
 		
 		return ResponseEntity.ok(null);
+	}
+	
+	// 세션 활성상태 체크
+	@GetMapping("/check/{id}")
+	public ResponseEntity<?> checkSession(@AuthenticationPrincipal CustomUserDetails user,
+			@PathVariable("id") Long leId) {
+		
+		return ResponseEntity.ok(
+				sessionService.check(leId)
+			);
 	}
 }

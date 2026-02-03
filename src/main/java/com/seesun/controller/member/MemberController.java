@@ -82,14 +82,13 @@ public class MemberController {
 		
 		return ResponseEntity.ok(res);
 	}
-	
 
 	// 회원 정보 검색
     @GetMapping("/profile")
     public ResponseEntity<MemberSearchDTO> getProfile(@AuthenticationPrincipal CustomUserDetails user) {
         Long mbId = user.getMbId();
         MemberSearchDTO memberSearch = memberService.getMyPageInfo(mbId);
-
+        
         return ResponseEntity.ok(memberSearch);
     }
 

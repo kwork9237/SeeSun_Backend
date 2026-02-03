@@ -11,6 +11,12 @@ public interface ActivateSessionMapper {
 	void insertSessionData(ActivateSessionDTO data);
 	void deleteSessionData(@Param("room_id") short roomId);
 	
-	ActivateSessionDTO getSessionData(@Param("uuid") String uuid);
-	int checkSessionByleId(@Param("le_id") Long leId);
+	ActivateSessionDTO getSessionDataByUuid(@Param("uuid") String uuid);
+	ActivateSessionDTO getSessionDataByLeId(@Param("le_id") Long leId);
+	
+	int checkExistsSessionByleId(@Param("le_id") Long leId);
+	int checkSessionOwner(@Param("mb_id") Long mbId);
+	
+	void setActivateStatus(@Param("mb_id") Long mbId);
+	int checkSessionState(@Param("le_id") Long leId);
 }

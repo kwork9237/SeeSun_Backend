@@ -2,18 +2,16 @@ package com.seesun.service.admin;
 
 import java.util.List;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.seesun.dto.admin.AdminDTO;
 import com.seesun.dto.admin.MemberManageDTO;
 import com.seesun.dto.admin.MentoRequestListDTO;
 import com.seesun.dto.notification.NotificationDTO;
-// [필수] SuggestionDTO import 확인
+import com.seesun.dto.suggestion.SuggestionAnswerDTO;
 import com.seesun.dto.suggestion.SuggestionDTO; 
 
 import com.seesun.mapper.admin.AdminMapper;
-import com.seesun.service.auth.MemberCredentialService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,8 +20,6 @@ import lombok.RequiredArgsConstructor;
 public class AdminService {
     
     private final AdminMapper adminMapper;
-    private final PasswordEncoder pwEncoder;
-    private final MemberCredentialService credentialService;
 
     // 관리자 메인
     public AdminDTO getDashboardStats() {
@@ -66,7 +62,7 @@ public class AdminService {
     }
     
  // [수정됨] 답변 등록 또는 수정 (Upsert 로직)
-    public void registerAnswer(com.seesun.dto.suggestion.SuggestionAnswerDTO dto) {
+    public void registerAnswer(SuggestionAnswerDTO dto) {
         // 1. 관리자 ID 설정 (임시)
         if (dto.getMbId() == null) {
             dto.setMbId(1L); 

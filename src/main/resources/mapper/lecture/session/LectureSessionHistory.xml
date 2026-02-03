@@ -16,12 +16,4 @@
 			#{mb_id}
 		)
 	</insert>
-
-	<update id="deactivateSession">
-		UPDATE lecture_session_history
-		SET status = 0
-		WHERE
-			history_id = #{history_id} AND
-			status = 1
-	</update>
 </mapper>

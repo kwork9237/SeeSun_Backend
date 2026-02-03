@@ -7,12 +7,14 @@
 	<insert id="insertSessionData" parameterType="activateSession">
 		INSERT INTO activate_lecture_session (
 			room_id,
+			mb_id,
 			le_id,
 			history_id,
 			uuid
 		)
 		VALUES (
 			#{room_id},
+			#{mb_id},
 			#{le_id},
 			#{history_id},
 			#{uuid}
@@ -24,15 +26,34 @@
 		WHERE room_id = #{room_id}
 	</delete>
 	
-	<select id="getSessionData" parameterType="string" resultType="activateSession">
+	<select id="getSessionDataByUuid" parameterType="string" resultType="activateSession">
 		SELECT * FROM activate_lecture_session
 		WHERE uuid = #{uuid}
 	</select>
 	
-	<select id="checkSessionByleId" resultType="int">
+	<select id="checkExistsSessionByleId" resultType="int">
 		SELECT EXISTS (
     		SELECT 1 FROM activate_lecture_session
     		WHERE le_id = #{le_id}
     	)
+	</select>
+	
+	<select id="checkSessionOwner" resultType="int">
+		SELECT EXISTS (
+    		SELECT 1 FROM activate_lecture_session
+    		WHERE mb_id = #{mb_id}
+    	)
+	</select>
+	
+	<update id="setActivateStatus" parameterType="long">
+		UPDATE activate_lecture_session
+			SET status = 1
+		WHERE
+			mb_id = #{mb_id}
+	</update>
+	
+	<select id="getSessionDataByLeId" resultType="activateSession">
+		SELECT status FROM activate_lecture_session
+		WHERE le_id = #{le_id}
 	</select>
 </mapper>

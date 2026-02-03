@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.seesun.dto.member.request.LoginRequestDTO;
 import com.seesun.dto.member.request.MemberJoinDTO;
 import com.seesun.dto.member.request.MentoRequestDTO;
-import com.seesun.dto.member.request.MemberSearchDTO;
 import com.seesun.dto.member.response.LoginResponseDTO;
 import com.seesun.global.exception.ErrorCode;
 import com.seesun.global.exception.GlobalException;

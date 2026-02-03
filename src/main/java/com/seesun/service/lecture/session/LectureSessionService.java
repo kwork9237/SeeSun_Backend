@@ -1,6 +1,5 @@
 package com.seesun.service.lecture.session;
 
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +31,7 @@ public class LectureSessionService {
 	public LectureSessionResponse create(Long mbId, Long leId) {
 		
 		// 강의 세션이 열려있는지 확인
-		if(activateSessionMapper.checkSessionByleId(leId) == 1)
+		if(activateSessionMapper.checkExistsSessionByleId(leId) == 1)
 			throw new GlobalException(ErrorCode.SESSION_EXISTS);
 		
 		// 개설자와 강의 ID 매칭 확인
@@ -57,6 +56,7 @@ public class LectureSessionService {
 			// 활성 세션에 등록
 			ActivateSessionDTO ssData = new ActivateSessionDTO();
 			ssData.setRoom_id(pool.getRoom_id());
+			ssData.setMb_id(mbId);
 			ssData.setLe_id(leId);
 			ssData.setHistory_id(hist.getHistory_id());
 			ssData.setUuid(UUIDUtil.generate());
@@ -83,18 +83,15 @@ public class LectureSessionService {
 	@Transactional
 	public void close(Long mbId, String uuid) {
 		// 현재 활성 세션 데이터 가져오기
-		ActivateSessionDTO ssData = activateSessionMapper.getSessionData(uuid);
+		ActivateSessionDTO ssData = activateSessionMapper.getSessionDataByUuid(uuid);
 		if(ssData == null)
 			throw new GlobalException(ErrorCode.SESSION_NOT_FOUND);
 		
-		// 요청한 회원 ID와 강의 ID 확인
-		if(lectureMapper.checkLectureMember(mbId, ssData.getLe_id()) != 1)
-			throw new GlobalException(ErrorCode.LECTURE_MENTO_NOT_MATCH);
+		// 세션 소유자인지 확인
+		if(activateSessionMapper.checkSessionOwner(mbId) != 1)
+			throw new GlobalException(ErrorCode.NOT_SESSION_OWNER);
 		
 		try {
-			// 히스토리에서 비활성으로 변경
-			historyMapper.deactivateSession(ssData.getHistory_id());
-			
 			// 활성 세션에서 삭제
 			activateSessionMapper.deleteSessionData(ssData.getRoom_id());
 			
@@ -110,12 +107,12 @@ public class LectureSessionService {
 	@Transactional
 	public void validate(Long mbId, String uuid) {
 		// 현재 활성 세션 데이터 가져오기
-		ActivateSessionDTO ssData = activateSessionMapper.getSessionData(uuid);
+		ActivateSessionDTO ssData = activateSessionMapper.getSessionDataByUuid(uuid);
 		if(ssData == null)
 			throw new GlobalException(ErrorCode.SESSION_NOT_FOUND);
 		
-		// 멘토일 경우 무시
-		if(lectureMapper.checkLectureMember(mbId, ssData.getLe_id()) == 1)
+		// 멘토일 경우 무시 (세션 소유자)
+		if(activateSessionMapper.checkSessionOwner(mbId) == 1)
 			return;
 		
 		// 정상 결제 상태를 찾을 수 없는 경우
@@ -124,7 +121,27 @@ public class LectureSessionService {
 	}
 	
 	@Transactional
-	public void check(Long leId) {
+	public void start(Long mbId, String uuid) {
+		// 현재 활성 세션 데이터 가져오기
+		ActivateSessionDTO ssData = activateSessionMapper.getSessionDataByUuid(uuid);
+		if(ssData == null)
+			throw new GlobalException(ErrorCode.SESSION_NOT_FOUND);
 		
+		// 세션 소유자인지 확인
+		if(activateSessionMapper.checkSessionOwner(mbId) != 1)
+			throw new GlobalException(ErrorCode.NOT_SESSION_OWNER);
+		
+		// 세션 활성 상태로 변경
+		activateSessionMapper.setActivateStatus(mbId);
+	}
+	
+	@Transactional
+	public String check(Long leId) {
+		ActivateSessionDTO ssData = activateSessionMapper.getSessionDataByLeId(leId);
+		
+		if(ssData.getStatus() == 0)
+			throw new GlobalException(ErrorCode.SESSION_NOT_STARTED);
+		
+		return ssData.getUuid();
 	}
 }
