@@ -48,9 +48,9 @@ public class ChatService {
         emitters.computeIfAbsent(roomId, k -> new CopyOnWriteArrayList<>())
                 .add(emitter);
 
-        emitter.onCompletion(() -> emitters.get(roomId).remove(emitter));
-        emitter.onTimeout(() -> emitters.get(roomId).remove(emitter));
-        emitter.onError((e) -> emitters.get(roomId).remove(emitter));
+        emitter.onCompletion(() -> remove(roomId, emitter));
+        emitter.onTimeout(() -> remove(roomId, emitter));
+        emitter.onError((e) -> remove(roomId, emitter));
         
         // 최초 연결 확인
         try {
@@ -73,8 +73,8 @@ public class ChatService {
                 		SseEmitter.event().name("chat").data(dto)
             		);
             } catch (Exception e) {
-            	remove(dto.getRoomId(), emitter);
                 emitter.complete();
+                remove(dto.getRoomId(), emitter);
                 
                 e.printStackTrace();
             }

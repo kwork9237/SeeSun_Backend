@@ -7,6 +7,7 @@ import com.seesun.dto.webrtc.response.RecordingResponseDTO;
 import com.seesun.dto.webrtc.response.SessionEventDTO;
 import com.seesun.global.exception.ErrorCode;
 import com.seesun.global.exception.GlobalException;
+import com.seesun.mapper.lecture.LectureMapper;
 import com.seesun.repository.webrtc.InMemoryRealtimeSessionRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class RealtimeSessionService {
     private final InMemoryRealtimeSessionRepository sessionRepo;
     private final SseEmitterService sseEmitterService;
     private final RecordingService recordingService;
-    private final com.seesun.mapper.lecture.LectureMapper lectureMapper;
+    private final LectureMapper lectureMapper;
 
     // Janus 서버 URL(환경변수 or 설정 파일에서 관리)
     private final String JANUS_URL = "https://janus.jsflux.co.kr/janus";
