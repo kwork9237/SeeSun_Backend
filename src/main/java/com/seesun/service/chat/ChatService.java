@@ -70,7 +70,9 @@ public class ChatService {
         for (SseEmitter emitter : list) {
             try {
                 emitter.send(
-                		SseEmitter.event().name("chat").data(dto)
+                		SseEmitter.event()
+                			.name("chat")
+                			.data(dto)
             		);
             } catch (Exception e) {
                 emitter.complete();
@@ -90,7 +92,7 @@ public class ChatService {
             emitters.remove(roomId);
         }
     }
-
+}
 //    public void broadcast(ChatMessageDTO msg) {
 //        Long room = msg.getLectureId();
 //        List<SseEmitter> list = emitters.get(room);
@@ -119,4 +121,3 @@ public class ChatService {
 //        }
 //    }
 
-}

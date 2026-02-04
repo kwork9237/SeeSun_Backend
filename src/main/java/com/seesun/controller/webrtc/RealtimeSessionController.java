@@ -1,15 +1,12 @@
 package com.seesun.controller.webrtc;
 
-import com.seesun.dto.webrtc.request.BootstrapRequestDTO;
 import com.seesun.dto.webrtc.request.EndSessionRequestDTO;
 import com.seesun.dto.webrtc.response.BootstrapResponseDTO;
 import com.seesun.dto.webrtc.response.RecordingResponseDTO;
-import com.seesun.global.uuid.UUIDUtil;
 import com.seesun.security.userdetail.CustomUserDetails;
 import com.seesun.service.webrtc.JanusRoomService;
 import com.seesun.service.webrtc.RealtimeSessionService;
 import com.seesun.service.webrtc.SseEmitterService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -71,11 +68,12 @@ public class RealtimeSessionController {
 //    }
 
     @PostMapping("/end")
-    public void endSession(@RequestBody EndSessionRequestDTO req) {
-        Long memberId = getLoginMemberId();
+    public void endSession(@AuthenticationPrincipal CustomUserDetails user, @RequestBody EndSessionRequestDTO req) {
+        Long memberId = user.getMbId();
         realtimeSessionService.endSession(req.getSessionId(), memberId);
     }
 
+    // 녹화 관련
     @GetMapping("/recording")
     public RecordingResponseDTO recording(@RequestParam String sessionId) {
         return realtimeSessionService.getRecording(sessionId);
@@ -97,13 +95,9 @@ public class RealtimeSessionController {
     }
 
     @GetMapping("/events")
-    public SseEmitter sse(@RequestParam String sessionId) {
-        Long memberId = getLoginMemberId();
+    public SseEmitter sse(@AuthenticationPrincipal CustomUserDetails user, @RequestParam String sessionId) {
+        Long memberId = user.getMbId();
         String clientKey = memberId + "-" + System.currentTimeMillis();
         return sseEmitterService.connect(sessionId, clientKey);
-    }
-
-    private Long getLoginMemberId() {
-        return 1L; // TODO: Authentication 적용시 수정
     }
 }
