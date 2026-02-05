@@ -1,17 +1,29 @@
 package com.seesun.service.admin;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import com.seesun.dto.admin.AdminDTO;
 import com.seesun.dto.admin.MemberManageDTO;
 import com.seesun.dto.admin.MentoRequestListDTO;
+import com.seesun.dto.file.response.FileDownloadDTO;
+import com.seesun.dto.file.result.FileDownloadResult;
 import com.seesun.dto.notification.NotificationDTO;
 import com.seesun.dto.suggestion.SuggestionAnswerDTO;
-import com.seesun.dto.suggestion.SuggestionDTO; 
-
+import com.seesun.dto.suggestion.SuggestionDTO;
+import com.seesun.global.exception.ErrorCode;
+import com.seesun.global.exception.GlobalException;
+import com.seesun.global.file.FileProperties;
 import com.seesun.mapper.admin.AdminMapper;
+import com.seesun.service.file.FileService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +32,8 @@ import lombok.RequiredArgsConstructor;
 public class AdminService {
     
     private final AdminMapper adminMapper;
+    private final FileService fileService;
+    private final FileProperties fileProperties;
 
     // 관리자 메인
     public AdminDTO getDashboardStats() {
@@ -116,4 +130,37 @@ public class AdminService {
         adminMapper.deleteNotification(ntId);
     }
     
+    // 파일 다운로드 (관리자 전용)
+    public FileDownloadResult getDownloadFile(Long fid) {
+    	FileDownloadDTO file = fileService.downloadData(fid);
+		
+		Path basePath = fileProperties.getBasePath();
+		Path path = null;
+		Resource resource = null;
+		String encodedName = null;
+		String contentType = null;
+
+		try {
+			path = basePath
+                .resolve(file.getRelative_path())
+                .toAbsolutePath()
+                .normalize();
+			
+			contentType = Files.probeContentType(path);
+			if(contentType == null) contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+
+        if (!Files.exists(path) || !Files.isReadable(path)) {
+            throw new GlobalException(ErrorCode.FILE_NOT_FOUND);
+        }
+
+        resource = new FileSystemResource(path);
+
+        encodedName = URLEncoder.encode(file.getOriginal_name(), StandardCharsets.UTF_8)
+                .replaceAll("\\+", "%20");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+        return new FileDownloadResult(resource, encodedName, file.getOriginal_name(), file.getSize(), contentType);
+    }
 }

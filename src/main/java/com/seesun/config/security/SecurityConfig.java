@@ -51,7 +51,7 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(List.of(
     	    "http://localhost:3000",          // 로컬 개발용
-    	    "https://du-project.kro.kr"		  // 실제 서비스 도메인은 추후 적용 필요. (26 01 15)
+    	    "https://du-project.kro.kr"
     	));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
@@ -107,9 +107,10 @@ public class SecurityConfig {
                 .requestMatchers("/pub/**", "/sub/**").permitAll()
                 
                 // 일부 API 제한
-                .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/mentor/**").hasRole("MENTOR")
                 .requestMatchers("/api/mentee/**").hasRole("MENTEE")
+                
 
                 // 그 외 모든 요청은 인증 필요
                 .anyRequest().authenticated()

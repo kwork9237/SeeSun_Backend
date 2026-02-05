@@ -3,6 +3,9 @@ package com.seesun.controller.admin;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.seesun.dto.admin.AdminDTO;
 import com.seesun.dto.admin.MemberManageDTO;
 import com.seesun.dto.admin.MentoRequestListDTO;
+import com.seesun.dto.file.response.FileDownloadDTO;
+import com.seesun.dto.file.result.FileDownloadResult;
 import com.seesun.dto.notification.NotificationDTO;
 import com.seesun.dto.suggestion.SuggestionDTO;
 import com.seesun.service.admin.AdminService;
@@ -27,7 +32,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/admin")
 public class AdminController {
-
     private final AdminService adminService;    
 
     // 관리자 메인 통계
@@ -54,9 +58,7 @@ public class AdminController {
         return isApproved ? "SUCCESS" : "FAIL";
     }
     
- // [수정] 전체 회원 목록 조회 API
- 
- // [수정] 전체 회원 목록 조회 (검색 기능 추가)
+    // [수정] 전체 회원 목록 조회 (검색 기능 추가)
     @GetMapping("/members")
     public ResponseEntity<List<MemberManageDTO>> getAllMembers(
             @RequestParam(value = "keyword", required = false) String keyword) { // keyword 추가
@@ -147,4 +149,19 @@ public class AdminController {
         return ResponseEntity.ok("DELETED");
     }
 
+	// 파일 다운로드는 관리자만 허용
+    @GetMapping("/file/download/{fileId}")
+    public ResponseEntity<Resource> download(@PathVariable("fileId") Long fid) {
+    	
+    	FileDownloadResult f = adminService.getDownloadFile(fid);
+    	
+    	return ResponseEntity.ok()
+    	        .header(HttpHeaders.CONTENT_DISPOSITION,
+    	                "attachment; filename=\"" + f.getOriginalName().replace("\"", "") + "\"; " +
+    	                "filename*=UTF-8''" + f.getEncodedName()
+    	            )
+    	            .contentType(MediaType.parseMediaType(f.getContentType()))
+    	            .contentLength(f.getSize())
+    	            .body(f.getResource());
+    }
 } 
