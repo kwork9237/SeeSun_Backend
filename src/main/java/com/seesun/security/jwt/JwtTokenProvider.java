@@ -23,9 +23,18 @@ public class JwtTokenProvider {
 	
 	// JWT 토큰 생성
 	// 회원 ID, 유저명만 토큰에 저장 (정보 최소화)
-	public String createToken(String username, Long mbId) {
+	public String createToken(String username, Long mbId, short mbTypeId) {
+		String role = switch (mbTypeId) {
+	        case 0 -> "ROLE_ADMIN";
+	        case 1 -> "ROLE_MENTEE";
+	        case 2 -> "ROLE_MENTOR";
+	        default -> "ROLE_GUEST";
+	    };
+		
+		
 		Claims claims = Jwts.claims().setSubject(username);
 		claims.put("mbId", mbId);
+		claims.put("role", role);
 
 		// 현재 시각, 만료 시각
 		Date now = new Date();
@@ -76,5 +85,10 @@ public class JwtTokenProvider {
 	// 토큰에서 유저이름 가져오기
 	public String getUsername(String token) {
 		return getClaims(token).getSubject();
+	}
+	
+	// 권한 가져오기
+	public String getRole(String token) {
+		return getClaims(token).get("role", String.class);
 	}
 }

@@ -92,18 +92,25 @@ public class SecurityConfig {
                 // 결제 관련 API
                 .requestMatchers("/api/orders/**").permitAll()
 
-                // 마이페이지 API
-                .requestMatchers("/api/member/**").permitAll()
+                // 회원가입 API
+                .requestMatchers("/api/members/**").permitAll()
 
                 // 채팅 SSE 전용 API + 인증 없이 허용
                 .requestMatchers("/api/seesun/live/chat/**").permitAll()
+                
+                // 강의 관련
+                .requestMatchers("/api/lectures/**").permitAll()
+                .requestMatchers("/api/reviews/**").permitAll()
+                
                 // WebSocket STOMP 허용
                 .requestMatchers("/ws/**", "/ws").permitAll()
                 .requestMatchers("/pub/**", "/sub/**").permitAll()
-
-                // 비로그인시 모든 API 경로 허용 (임시 조치)
-                .requestMatchers("/api/**").permitAll()
                 
+                // 일부 API 제한
+                .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
+//                .requestMatchers("/api/mentor/**").hasRole("MENTOR")
+//                .requestMatchers("/api/mentee/**").hasRole("MENTEE")
+
                 // 그 외 모든 요청은 인증 필요
                 .anyRequest().authenticated()
             )

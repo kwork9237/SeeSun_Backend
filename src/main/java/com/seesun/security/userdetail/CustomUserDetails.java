@@ -43,10 +43,10 @@ public class CustomUserDetails implements UserDetails {
 	            role = "ROLE_ADMIN"; // 관리자
 	            break;
 	        case 1: 
-	            role = "ROLE_MENTEE"; // 멘토
+	            role = "ROLE_MENTEE"; // 멘티
 	            break;
 	        case 2: 
-	            role = "ROLE_MENTO"; // 멘티
+	            role = "ROLE_MENTO"; // 멘토
 	            break;
 	        default: 
 	            role = "ROLE_GUEST"; // 비회원

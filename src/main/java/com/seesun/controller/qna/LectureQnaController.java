@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/lecture/qna")
+@RequestMapping("/api/lectures/qna")
 @RequiredArgsConstructor
 public class LectureQnaController {
 

@@ -95,9 +95,9 @@ public class MemberService {
 	
 			// auth 개체를 userdetail로 변환
 			CustomUserDetails d = (CustomUserDetails) auth.getPrincipal();
-	
+			
 			// 토큰 생성 및 반환 
-			response.setAccessToken(jwtProvider.createToken(d.getUsername(), d.getMbId()));
+			response.setAccessToken(jwtProvider.createToken(d.getUsername(), d.getMbId(), d.getMbTypeId()));
 
 			return response;
 		} catch (AuthenticationException e) {
