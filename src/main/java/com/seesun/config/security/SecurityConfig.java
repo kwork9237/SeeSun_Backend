@@ -108,8 +108,8 @@ public class SecurityConfig {
                 
                 // 일부 API 제한
                 .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
-//                .requestMatchers("/api/mentor/**").hasRole("MENTOR")
-//                .requestMatchers("/api/mentee/**").hasRole("MENTEE")
+                .requestMatchers("/api/mentor/**").hasRole("MENTOR")
+                .requestMatchers("/api/mentee/**").hasRole("MENTEE")
 
                 // 그 외 모든 요청은 인증 필요
                 .anyRequest().authenticated()

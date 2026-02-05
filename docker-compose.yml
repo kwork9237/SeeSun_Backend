@@ -7,7 +7,7 @@ services:
       - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: prod
-        TZ: Asia/Seoul
+      TZ: Asia/Seoul
     volumes:
       - /home/ubuntu/app/config/application-secret.yml:/app/config/application-secret.yml:ro
       - /home/ubuntu/app/files:/app/files
