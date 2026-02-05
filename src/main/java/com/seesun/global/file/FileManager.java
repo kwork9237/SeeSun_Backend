@@ -15,9 +15,11 @@ import com.seesun.global.exception.GlobalException;
 import com.seesun.global.uuid.UUIDUtil;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FileManager {
 	// application 파일 설정값
 	private final FileProperties props;
@@ -53,6 +55,8 @@ public class FileManager {
 			// 상대경로
 			Path relative = props.getBasePath().relativize(target);
 			String relativePath = relative.toString().replace(File.separatorChar, '/');
+			
+			log.info("[FILEMANAGER] ILE SAVED PATH = {}", target.toAbsolutePath());
 			
 			// 결과 반환
 			return new FileSaveResult(relativePath, stored, original, file.getSize(), ext);
