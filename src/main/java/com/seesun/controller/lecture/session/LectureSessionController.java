@@ -58,7 +58,7 @@ public class LectureSessionController {
 	}
 	
 	// 강의 시작
-	@GetMapping("/start/{id}")
+	@PostMapping("/start/{id}")
 	public ResponseEntity<?> startSession(@AuthenticationPrincipal CustomUserDetails user,
 			@PathVariable("id") String uuid) {
 		
