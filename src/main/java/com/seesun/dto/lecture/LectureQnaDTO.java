@@ -6,15 +6,16 @@ import java.time.LocalDateTime;
 
 @Getter @Setter
 public class LectureQnaDTO {
-    private Long qnaId;
-    private Long leId;
-    private Long mbId;        // DB 타입인 BIGINT에 맞춰 Long으로 변경
+    private Long qna_id;          
+    private Long le_id;           
+    private Long mb_id;           
     private String title;
     private String content;
     private String answer;
-    private Long ansMbId;     // 답변자 멘토 ID
+    private Long ans_mb_id;       
     private Integer status;
-    private String authorNickname; // 목록 조회 시 표시용
-    private LocalDateTime createdAt;
-    private LocalDateTime modified_at;
+    private String authorNickname; 
+    private Long mentor_id;        // ★ 추가: 강의를 개설한 멘토 ID (프론트 권한 체크용)
+    private LocalDateTime created_at;  
+    private LocalDateTime modified_at; 
 }
