@@ -31,6 +31,11 @@
 		WHERE uuid = #{uuid}
 	</select>
 	
+	<select id="getSessionDataByLeId" resultType="activateSession">
+		SELECT * FROM activate_lecture_session
+		WHERE le_id = #{le_id}
+	</select>
+	
 	<select id="checkExistsSessionByleId" resultType="int">
 		SELECT EXISTS (
     		SELECT 1 FROM activate_lecture_session
@@ -51,9 +56,4 @@
 		WHERE
 			mb_id = #{mb_id}
 	</update>
-	
-	<select id="getSessionDataByLeId" resultType="activateSession">
-		SELECT status FROM activate_lecture_session
-		WHERE le_id = #{le_id}
-	</select>
 </mapper>
